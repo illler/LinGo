@@ -1,7 +1,17 @@
 import logo from './logo.svg';
 import './App.css';
+import axios from 'axios';
+import {useState} from "react";
 
 function App() {
+
+  const [displayText, setDisplayText] = useState('Тут будет текст сервера!');
+
+  async function sendPOSTtoBackend() {
+    const data = (await axios.post('http://localhost:3001/')).data
+    await setDisplayText(data.text);
+  }
+
   return (
     <div className="App">
       <header className="App-header">
@@ -17,6 +27,8 @@ function App() {
         >
           Learn React
         </a>
+        <button onClick={sendPOSTtoBackend}>test</button>
+        <p>{displayText}</p>
       </header>
     </div>
   );
