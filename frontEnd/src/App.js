@@ -8,7 +8,14 @@ function App() {
   const [displayText, setDisplayText] = useState('Тут будет текст сервера!');
 
   async function sendPOSTtoBackend() {
-    const data = (await axios.post('http://localhost:3001/')).data
+    const requestData = {
+      "firstname": "Alex",
+      "lastname": "Pyatunin",
+      "email": "test@mail.ru",
+      "password": "1234"
+    };
+
+    const data = (await axios.post('http://localhost:8080/api/v1/auth/registration', requestData)).data
     await setDisplayText(data.text);
   }
 
