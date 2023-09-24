@@ -6,6 +6,7 @@ import com.example.backend.auth.RegisterRequest;
 import com.example.backend.error.ErrorResponse;
 import com.example.backend.services.AuthenticationService;
 import com.example.backend.util.UserValidator;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/auth")
+@Tag(name = "AuthController", description = "Это то что нужно трогать)")
 public class AuthController {
 
     private final AuthenticationService authenticationService;
