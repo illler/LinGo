@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import {Link, useNavigate} from "react-router-dom";
+import API from "../Actions/API";
 
 const RegistrationForm = () => {
     const [firstname, setFirstname] = useState('');
@@ -21,7 +22,7 @@ const RegistrationForm = () => {
             role:"USER",
         };
         try {
-            const response = await axios.post('http://localhost:8080/api/v1/auth/registration', requestData);
+            const response = await axios.post(API.USER.AUTH.REGISTRATION, requestData);
             setResponseText("Вы успешно зарегистрировались!");
             history("/authorization")
         } catch (error) {
