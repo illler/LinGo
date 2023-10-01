@@ -28,7 +28,7 @@ const AuthorizationForm = () => {
 
     return (
         <div>
-            <h1>Автоизация</h1>
+            <h1>Авторизация</h1>
             <form onSubmit={handleSubmit}>
                 <label>
                     Email:
@@ -40,7 +40,7 @@ const AuthorizationForm = () => {
                     <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
                 </label>
                 <br />
-                <button type="submit">Авторизироваться</button>
+                <button type="submit">Авторизоваться</button>
             </form>
             <div>{responseText}</div>
         </div>

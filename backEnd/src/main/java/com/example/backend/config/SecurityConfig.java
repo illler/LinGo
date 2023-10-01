@@ -53,6 +53,7 @@ public class SecurityConfig {
                         config.setAllowCredentials(true);
                         config.setAllowedHeaders(Collections.singletonList("*"));
                         config.setMaxAge(3600L);
+                        config.addExposedHeader("Authorization");
                         return config;
                     }
                 }))
@@ -92,6 +93,8 @@ public class SecurityConfig {
 
                 .anyRequest().authenticated()
                 .and()
+//                .oauth2Login()
+//                .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()

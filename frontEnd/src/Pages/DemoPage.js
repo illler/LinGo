@@ -6,15 +6,11 @@ import { useLocation } from 'react-router-dom';
 const DemoPage = () => {
     const location = useLocation();
     const authToken = location.state?.authToken;
+    console.log(authToken);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                if (!authToken) {
-                    console.error('Ошибка авторизации: Токен не получен.');
-                    return;
-                }
-
                 const response = await axios.get("http://localhost:8080/api/v1/demo", {
                     headers: {
                         "Content-Type": "application/json",
