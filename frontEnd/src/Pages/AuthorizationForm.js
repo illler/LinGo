@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import {useNavigate} from "react-router-dom";
+import API from "../Actions/API"
 
 const AuthorizationForm = () => {
     const [email, setEmail] = useState('');
@@ -16,7 +17,7 @@ const AuthorizationForm = () => {
             password,
         };
         try {
-            const response = await axios.post('http://localhost:8080/api/v1/auth/authenticate', requestData);
+            const response = await axios.post(API.USER.AUTH.LOGIN, requestData);
             const authToken = response.data.token;
             history('/demo', { state: { authToken } })
 
