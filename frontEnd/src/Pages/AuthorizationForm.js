@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import {useNavigate} from "react-router-dom";
 
-const RegistrationForm = () => {
+const AuthorizationForm = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [responseText, setResponseText] = useState('');
@@ -17,9 +17,9 @@ const RegistrationForm = () => {
         };
         try {
             const response = await axios.post('http://localhost:8080/api/v1/auth/authenticate', requestData);
-            console.log(response)
-            setResponseText("Вы успешно авторизировались!");
-            history("/")
+            const authToken = response.data.token;
+            history('/demo', { state: { authToken } })
+
 
         } catch (error) {
             setResponseText('Произошла ошибка: ' + error.message);
@@ -47,4 +47,4 @@ const RegistrationForm = () => {
     );
 };
 
-export default RegistrationForm;
+export default AuthorizationForm;
