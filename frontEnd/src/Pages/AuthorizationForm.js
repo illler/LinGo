@@ -19,6 +19,7 @@ const AuthorizationForm = () => {
         try {
             const response = await axios.post(API.USER.AUTH.LOGIN, requestData);
             const authToken = response.data.token;
+            localStorage.setItem('authToken', authToken);
             history('/demo', { state: { authToken } })
 
 
