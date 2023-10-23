@@ -2,11 +2,13 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import {useNavigate} from 'react-router-dom';
 import API from "../Actions/API"
+import {useAuth} from "./AuthContext";
 
 const DemoPage = () => {
     const history = useNavigate();
     const authToken = localStorage.getItem('authToken');
-    const [isLoggedOut, setIsLoggedOut] = useState(false);
+    // const [isLoggedOut, setIsLoggedOut] = useState(false);
+    const { logout } = useAuth();
 
     const handleLogout = async () => {
         try {
@@ -17,7 +19,7 @@ const DemoPage = () => {
                 }
             });
             localStorage.removeItem('authToken');
-            setIsLoggedOut(true);
+            logout();
             history("/")
         } catch (error) {
             console.error('Ошибка при выходе:', error);
@@ -25,7 +27,7 @@ const DemoPage = () => {
     };
 
     useEffect(() => {
-        if (!isLoggedOut) {
+        if (!logout) {
             const fetchData = async () => {
                 try {
                     const response = await axios.get(API.USER.DEMO, {
@@ -42,7 +44,7 @@ const DemoPage = () => {
 
             fetchData();
         }
-    }, [authToken, isLoggedOut]);
+    }, [authToken, logout]);
 
     return (
         <div>

@@ -5,19 +5,22 @@ import AuthorizationForm from './Pages/AuthorizationForm';
 import HomePage from "./Pages/HomePage";
 import DemoPage from "./Pages/DemoPage";
 import ChatRoom from "./Pages/ChatRoom";
+import {AuthProvider} from "./Pages/AuthContext";
 
 
 const App = () => {
     return (
-        <Router>
-            <Routes>
-                <Route path="/" element={<HomePage />} />
-                <Route path="/demo" element={<DemoPage />} />
-                <Route path="/registration" element={<RegistrationForm />} />
-                <Route path="/authorization" element={<AuthorizationForm />} />
-                <Route path="/chat" element={<ChatRoom />} />
-            </Routes>
-        </Router>
+        <AuthProvider>
+            <Router>
+                <Routes>
+                    <Route path="/" element={<HomePage />} />
+                    <Route path="/demo" element={<DemoPage />} />
+                    <Route path="/registration" element={<RegistrationForm />} />
+                    <Route path="/authorization" element={<AuthorizationForm />} />
+                    <Route path="/chat" element={<ChatRoom />} />
+                </Routes>
+            </Router>
+        </AuthProvider>
     );
 };
 

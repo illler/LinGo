@@ -75,6 +75,7 @@ public class SecurityConfig {
 
 
 
+//                .requestMatchers("http://localhost:3000/ws/**").permitAll()
 
                 .requestMatchers("/api/v1/management/**").hasAnyRole(ADMIN.name(), MANAGER.name())
 

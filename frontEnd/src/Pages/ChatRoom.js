@@ -17,10 +17,13 @@ const ChatRoom = () => {
         console.log(userData);
     }, [userData]);
 
-    const connect =()=>{
+    const connect = () => {
+        const authToken = localStorage.getItem('authToken'); // Получите токен из localStorage
         let Sock = new SockJS('http://localhost:8080/ws');
         stompClient = over(Sock);
-        stompClient.connect({},onConnected, onError);
+
+        // Установите заголовок "Authorization" с токеном
+        stompClient.connect({"Content-Type": "application/json", 'Authorization': `Bearer ${authToken}` }, onConnected, onError);
     }
 
     const onConnected = () => {

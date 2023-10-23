@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import {useNavigate} from "react-router-dom";
 import API from "../Actions/API"
+import { useAuth } from './AuthContext'; // Импортируйте useAuth
 
 const AuthorizationForm = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [responseText, setResponseText] = useState('');
+    const { login } = useAuth(); // Получите функцию login из контекста
 
     const history = useNavigate();
 
@@ -20,9 +22,8 @@ const AuthorizationForm = () => {
             const response = await axios.post(API.USER.AUTH.LOGIN, requestData);
             const authToken = response.data.token;
             localStorage.setItem('authToken', authToken);
-            history('/demo', { state: { authToken } })
-
-
+            login(); // Вызовите функцию login после успешной авторизации
+            history('/chat');
         } catch (error) {
             setResponseText('Произошла ошибка: ' + error.message);
         }
