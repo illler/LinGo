@@ -70,7 +70,8 @@ public class SecurityConfig {
                         "/swagger-ui/**",
                         "/webjars/**",
                         "/swagger-ui.html",
-                        "ws"
+                        "ws",
+                        "*"
                 )
                 .permitAll()
 
