@@ -50,7 +50,7 @@ public class AuthenticationServiceTest {
 
     @Test
     void testRegister() {
-        RegisterRequest registerRequest = new RegisterRequest("John", "Doe", "johndoe@example.com", "password", Role.USER);
+        RegisterRequest registerRequest = new RegisterRequest("John", "Doe", "johndoe@example.com", "password", "89676676655", Role.USER);
         User user = User.builder()
                 .firstname(registerRequest.getFirstname())
                 .lastname(registerRequest.getLastname())
