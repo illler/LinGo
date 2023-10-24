@@ -69,13 +69,12 @@ public class SecurityConfig {
                         "/configuration/security",
                         "/swagger-ui/**",
                         "/webjars/**",
-                        "/swagger-ui.html"
+                        "/swagger-ui.html",
+                        "/ws/**"
                 )
                 .permitAll()
 
 
-
-//                .requestMatchers("http://localhost:3000/ws/**").permitAll()
 
                 .requestMatchers("/api/v1/management/**").hasAnyRole(ADMIN.name(), MANAGER.name())
 
