@@ -20,8 +20,7 @@ public class UserController {
 
     @GetMapping("/getCurrentUser")
     public ResponseEntity<User> getCurrentUser(@RequestHeader(name = "Authorization") String token){
-        System.out.println(tokenRepository.findByToken(token.substring(7)).orElse(null).getUser());
-        return ResponseEntity.ok(null);
+        return ResponseEntity.ok(tokenRepository.findByToken(token.substring(7)).orElse(null).getUser());
     }
 
 
