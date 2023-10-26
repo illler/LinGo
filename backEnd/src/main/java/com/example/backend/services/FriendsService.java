@@ -1,7 +1,6 @@
 package com.example.backend.services;
 
 import com.example.backend.model.Friends;
-import com.example.backend.repositories.FriendsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

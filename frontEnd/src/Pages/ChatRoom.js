@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import {over} from 'stompjs';
 import SockJS from 'sockjs-client';
+import axios from "axios";
+import API from "../Actions/API";
+import {useNavigate} from "react-router-dom";
+
 
 
 var stompClient =null;
@@ -14,24 +18,54 @@ const ChatRoom = () => {
         connected: false,
         message: ''
     });
+    const authToken = localStorage.getItem('authToken');
+    const history = useNavigate();
+
+    const handleLogout = async () => {
+        try {
+            await axios.post(API.USER.AUTH.LOGOUT, null, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${authToken}`,
+                }
+            });
+            localStorage.removeItem('authToken');
+            history("/authorization")
+        } catch (error) {
+            console.error('Ошибка при выходе:', error);
+        }
+    };
+
+    // const response = await axios.get('http://localhost:8080/api/v1/getCurrentUser', {
+    //     headers: {
+    //         'Authorization': `Bearer ${authToken}`,
+    //     },
+    // });
+    // const firstname = response.data.firstname;
+
+
     useEffect(() => {
+        if (localStorage.getItem("authToken") === null) {
+            history("/authorization");
+        }
         console.log(userData);
     }, [userData]);
 
+
+
     const connect = () => {
-        const authToken = localStorage.getItem('authToken'); // Получите токен из localStorage
         let Sock = new SockJS('http://localhost:8080/ws');
         stompClient = over(Sock);
-
-        // Установите заголовок "Authorization" с токеном
         stompClient.connect({}, onConnected, onError);
     }
 
+
     const onConnected = () => {
-        setUserData({...userData,"connected": true});
         stompClient.subscribe('/chatroom/public', onMessageReceived);
         stompClient.subscribe('/user/'+userData.username+'/private', onPrivateMessage);
         userJoin();
+        setUserData({...userData,"connected": true});
+
     }
 
     const userJoin=()=>{
@@ -122,6 +156,7 @@ const ChatRoom = () => {
     }
     return (
         <div className="container">
+            <button onClick={handleLogout}>Выход</button>
             {userData.connected?
                 <div className="chat-box">
                     <div className="member-list">

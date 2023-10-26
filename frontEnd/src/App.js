@@ -5,12 +5,10 @@ import AuthorizationForm from './Pages/AuthorizationForm';
 import HomePage from "./Pages/HomePage";
 import DemoPage from "./Pages/DemoPage";
 import ChatRoom from "./Pages/ChatRoom";
-import {AuthProvider} from "./Pages/AuthContext";
 
 
 const App = () => {
     return (
-        <AuthProvider>
             <Router>
                 <Routes>
                     <Route path="/" element={<HomePage />} />
@@ -20,7 +18,6 @@ const App = () => {
                     <Route path="/chat" element={<ChatRoom />} />
                 </Routes>
             </Router>
-        </AuthProvider>
     );
 };
 
