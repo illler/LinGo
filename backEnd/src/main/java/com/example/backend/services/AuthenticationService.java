@@ -57,6 +57,7 @@ public class AuthenticationService {
         revokeAllUserToken(user);
         saveUserToken(user, jwtToken);
         return AuthenticationResponse.builder()
+                .id(user.getId())
                 .token(jwtToken)
                 .build();
     }

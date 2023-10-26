@@ -4,6 +4,7 @@ import com.example.backend.DTO.UserDTO;
 import com.example.backend.model.User;
 import com.example.backend.repositories.TokenRepository;
 import com.example.backend.repositories.UserRepository;
+import com.example.backend.services.FriendsService;
 import com.example.backend.services.MyUserDetailsService;
 import com.example.backend.services.TokenService;
 import com.example.backend.token.Token;
@@ -22,6 +23,7 @@ public class UserController {
 
     private final MyUserDetailsService userDetailsService;
     private final TokenService tokenService;
+    private final FriendsService friendsService;
     private final ModelMapper modelMapper;
 
 
@@ -42,10 +44,12 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
-//    public ResponseEntity<String> addFriend(@RequestParam String currentUserId,
-//                                            @RequestParam String newFriendId){
-//
-//    }
+    @PostMapping("/addFriends")
+    public String addFriend(@RequestParam String currentUserId,
+                            @RequestParam String newFriendId){
+        friendsService.addNewFriend(currentUserId, newFriendId);
+        return "Друзья добавлены";
+    }
 
     public UserDTO convertToPersonDTO(User person) {
         return modelMapper.map(person, UserDTO.class);

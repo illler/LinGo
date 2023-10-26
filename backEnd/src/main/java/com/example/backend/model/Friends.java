@@ -10,6 +10,9 @@ import java.util.List;
 public class Friends {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;

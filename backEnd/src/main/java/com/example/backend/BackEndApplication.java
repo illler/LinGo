@@ -9,8 +9,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-import static com.example.backend.model.Role.ADMIN;
-import static com.example.backend.model.Role.MANAGER;
+import static com.example.backend.model.Role.*;
 
 @SpringBootApplication
 public class BackEndApplication {
@@ -39,6 +38,23 @@ public class BackEndApplication {
                     .role(MANAGER)
                     .build();
             System.out.println("Manager token: " + service.register(manager).getToken());
+
+            var user = RegisterRequest.builder()
+                    .firstname("user1")
+                    .lastname("user1")
+                    .email("user1@gmail.ru")
+                    .password("password")
+                    .role(USER)
+                    .build();
+            System.out.println("User token: " + service.register(user).getToken());
+            var user2 = RegisterRequest.builder()
+                    .firstname("user2")
+                    .lastname("user2")
+                    .email("user2@gmail.ru")
+                    .password("password")
+                    .role(USER)
+                    .build();
+            System.out.println("User2 token: " + service.register(user2).getToken());
         };
     }
 
