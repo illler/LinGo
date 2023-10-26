@@ -16,7 +16,7 @@ import java.util.Optional;
 
 
 @ExtendWith(MockitoExtension.class)
-public class MyUserDetailsServiceTest {
+public class MyMyUserDetailsServiceTest {
 
 
     private MyUserDetailsService userDetailsService;
