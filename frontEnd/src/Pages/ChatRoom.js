@@ -35,15 +35,6 @@ const ChatRoom = () => {
             console.error('Ошибка при выходе:', error);
         }
     };
-
-    // const response = await axios.get('http://localhost:8080/api/v1/getCurrentUser', {
-    //     headers: {
-    //         'Authorization': `Bearer ${authToken}`,
-    //     },
-    // });
-    // const firstname = response.data.firstname;
-
-
     useEffect(() => {
         if (localStorage.getItem("authToken") === null) {
             history("/authorization");
@@ -51,6 +42,25 @@ const ChatRoom = () => {
         console.log(userData);
     }, [userData]);
 
+
+    const updateUserFromAPI = async () => {
+        try {
+            const response = await axios.get('http://localhost:8080/api/v1/getCurrentUser', {
+                headers: {
+                    'Authorization': `Bearer ${authToken}`,
+                },
+            });
+            const firstname = response.data.firstname;
+            setUserData({ ...userData, username: firstname });
+        } catch (error) {
+            // Обработка ошибки
+            console.error(error);
+        }
+    };
+
+    useEffect(() => {
+        updateUserFromAPI();
+    }, []);
 
 
     const connect = () => {
@@ -208,7 +218,7 @@ const ChatRoom = () => {
                         name="userName"
                         value={userData.username}
                         onChange={handleUsername}
-                        margin="normal"
+                        hidden={true}
                     />
                     <button type="button" onClick={registerUser}>
                         connect
