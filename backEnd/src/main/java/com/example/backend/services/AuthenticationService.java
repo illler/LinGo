@@ -53,11 +53,12 @@ public class AuthenticationService {
         );
         var user = repository.findByEmail(request.getEmail())
                 .orElseThrow();
+        String id = user.getId();
         var jwtToken = jwtService.generateToken(user);
         revokeAllUserToken(user);
         saveUserToken(user, jwtToken);
         return AuthenticationResponse.builder()
-                .id(user.getId())
+                .id(id)
                 .token(jwtToken)
                 .build();
     }

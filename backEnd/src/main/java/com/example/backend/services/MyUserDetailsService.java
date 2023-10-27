@@ -8,6 +8,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class MyUserDetailsService implements UserDetailsService {
@@ -23,9 +25,10 @@ public class MyUserDetailsService implements UserDetailsService {
         return userRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 
-    public void addNewFriend() {
-
+    public List<User> findUserByNameOrEmail(String pattern){
+        return userRepository.findAllByEmailOrName(pattern, pattern);
     }
+
 
     public void saveNewOrUpdateExistingUser(User user){
         userRepository.save(user);
