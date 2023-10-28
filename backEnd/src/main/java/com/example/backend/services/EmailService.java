@@ -7,7 +7,7 @@ import com.example.backend.model.User;
 
 public interface EmailService {
 
-    void sendPasswordRecoveryMail(UserDTO user);
+    void sendPasswordRecoveryMail(User user);
 
     void sendRegistrationMail(User user);
 

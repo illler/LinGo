@@ -3,6 +3,7 @@ package com.example.backend.services.impl;
 import com.example.backend.DTO.UserDTO;
 import com.example.backend.model.MailType;
 import com.example.backend.model.User;
+import com.example.backend.repositories.UserRepository;
 import com.example.backend.services.EmailService;
 import freemarker.template.Configuration;
 import jakarta.mail.internet.MimeMessage;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 // Annotation
 @Service
@@ -26,6 +28,8 @@ public class EmailServiceImpl implements EmailService{
 
     private final JavaMailSender javaMailSender;
     private final Configuration configuration;
+
+    private final UserRepository userRepository;
 
     @Value("${spring.mail.username}")
     private String sender;
@@ -83,7 +87,7 @@ public class EmailServiceImpl implements EmailService{
 
 
     @SneakyThrows
-    public void sendPasswordRecoveryMail(UserDTO user) {
+    public void sendPasswordRecoveryMail(User user) {
         MimeMessage message = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, false, "UTF-8");
         helper.setSubject("LinGo Auth");
@@ -94,10 +98,17 @@ public class EmailServiceImpl implements EmailService{
     }
 
     @SneakyThrows
-    private String getRecoveryPasswordEmailContent(UserDTO user) {
+    private String getRecoveryPasswordEmailContent(User user) {
+        Random rnd = new Random();
+        int number = rnd.nextInt(999999);
+        String newPassword = String.format("%06d", number);
+        user.setPassword(newPassword);
+        userRepository.save(user);
+
         StringWriter stringWriter = new StringWriter();
         Map<String, Object> model = new HashMap<>();
-        model.put("userTo", user);
+        model.put("username", user.getFirstname());
+        model.put("newPassword", newPassword);
         configuration.getTemplate("recovery.ftlh")
                 .process(model, stringWriter);
         return stringWriter.getBuffer().toString();

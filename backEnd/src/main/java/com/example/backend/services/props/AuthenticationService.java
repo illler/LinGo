@@ -1,5 +1,6 @@
 package com.example.backend.services.props;
 
+import com.example.backend.DTO.AuthDTO;
 import com.example.backend.auth.AuthenticationRequest;
 import com.example.backend.auth.AuthenticationResponse;
 import com.example.backend.auth.RegisterRequest;
@@ -13,8 +14,12 @@ import com.example.backend.token.TokenType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import static com.example.backend.model.Role.USER;
 
 @Service
 @RequiredArgsConstructor
@@ -89,4 +94,17 @@ public class AuthenticationService {
         tokenRepository.saveAll(validToken);
     }
 
+    public boolean checkTemplePassword(AuthDTO authDTO) {
+        User oldUser = repository.findByEmail(authDTO.getEmail())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        return oldUser.getPassword().equals(authDTO.getPassword());
+    }
+
+    @Transactional
+    public void updatePassword(AuthDTO authDTO){
+        User oldUser = repository.findByEmail(authDTO.getEmail())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        oldUser.setPassword(passwordEncoder.encode(authDTO.getPassword()));
+        repository.save(oldUser);
+    }
 }
