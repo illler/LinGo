@@ -1,7 +1,7 @@
 package com.example.backend.util;
 
 import com.example.backend.model.User;
-import com.example.backend.services.MyUserDetailsService;
+import com.example.backend.services.props.MyUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;

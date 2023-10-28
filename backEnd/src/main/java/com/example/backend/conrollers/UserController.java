@@ -2,8 +2,7 @@ package com.example.backend.conrollers;
 
 import com.example.backend.DTO.UserDTO;
 import com.example.backend.model.User;
-import com.example.backend.services.FriendsService;
-import com.example.backend.services.MyUserDetailsService;
+import com.example.backend.services.props.MyUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +11,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -20,7 +18,6 @@ import java.util.stream.Collectors;
 public class UserController {
 
     private final MyUserDetailsService userDetailsService;
-    private final FriendsService friendsService;
     private final ModelMapper modelMapper;
 
 
@@ -41,12 +38,7 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
-    @PostMapping("/addFriends")
-    public String addFriend(@RequestParam String currentUserId,
-                            @RequestParam String newFriendId){
-        friendsService.addNewFriend(currentUserId, newFriendId);
-        return "Друзья добавлены";
-    }
+
 
     @GetMapping("/search")
     public List<UserDTO> searchForFriends(@RequestParam String pattern){

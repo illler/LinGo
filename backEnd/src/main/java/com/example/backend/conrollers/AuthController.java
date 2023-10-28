@@ -4,7 +4,7 @@ import com.example.backend.auth.AuthenticationResponse;
 import com.example.backend.auth.AuthenticationRequest;
 import com.example.backend.auth.RegisterRequest;
 import com.example.backend.error.ErrorResponse;
-import com.example.backend.services.AuthenticationService;
+import com.example.backend.services.props.AuthenticationService;
 import com.example.backend.util.UserValidator;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

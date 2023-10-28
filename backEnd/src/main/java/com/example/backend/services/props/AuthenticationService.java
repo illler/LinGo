@@ -1,13 +1,13 @@
-package com.example.backend.services;
+package com.example.backend.services.props;
 
 import com.example.backend.auth.AuthenticationRequest;
 import com.example.backend.auth.AuthenticationResponse;
 import com.example.backend.auth.RegisterRequest;
 import com.example.backend.config.JwtService;
-import com.example.backend.model.Role;
 import com.example.backend.model.User;
 import com.example.backend.repositories.TokenRepository;
 import com.example.backend.repositories.UserRepository;
+import com.example.backend.services.impl.EmailServiceImpl;
 import com.example.backend.token.Token;
 import com.example.backend.token.TokenType;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +27,7 @@ public class AuthenticationService {
     private final TokenRepository tokenRepository;
 
     private final AuthenticationManager authenticationManager;
+    private final EmailServiceImpl emailService;
 
     public AuthenticationResponse register(RegisterRequest request) {
         var user = User.builder()
@@ -38,9 +39,12 @@ public class AuthenticationService {
                 .role(request.getRole())
                 .build();
         var savedUser = repository.save(user);
+        String id = user.getId();
         var jwtToken = jwtService.generateToken(user);
         saveUserToken(savedUser, jwtToken);
+        emailService.sendRegistrationMail(savedUser);
         return AuthenticationResponse.builder()
+                .id(id)
                 .token(jwtToken)
                 .build();
     }

@@ -1,4 +1,4 @@
-package com.example.backend.services;
+package com.example.backend.services.props;
 
 import com.example.backend.model.User;
 import com.example.backend.repositories.UserRepository;

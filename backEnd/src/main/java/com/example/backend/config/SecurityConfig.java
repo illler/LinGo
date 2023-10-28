@@ -91,7 +91,7 @@ public class SecurityConfig {
 //                .requestMatchers(HttpMethod.DELETE, "/api/v1/admin/**").hasAnyAuthority(ADMIN_DELETE.name())
 
 
-                .anyRequest().authenticated()
+                .anyRequest().permitAll()
                 .and()
 //                .oauth2Login()
 //                .and()
