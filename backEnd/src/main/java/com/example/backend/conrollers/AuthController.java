@@ -9,18 +9,16 @@ import com.example.backend.error.ErrorResponse;
 import com.example.backend.model.User;
 import com.example.backend.services.impl.EmailServiceImpl;
 import com.example.backend.services.props.AuthenticationService;
+import com.example.backend.services.props.DTOService;
 import com.example.backend.services.props.MyUserDetailsService;
 import com.example.backend.util.UserValidator;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,6 +31,8 @@ public class AuthController {
 
     private final MyUserDetailsService myUserDetailsService;
     private final EmailServiceImpl emailService;
+
+    private final DTOService dtoService;
 
 
     @PostMapping("/registration")
@@ -51,15 +51,15 @@ public class AuthController {
     }
 
     @PostMapping("/recover-password")
-    public String sendNewPassword(@RequestParam String email){
+    public UserDTO sendNewPassword(@RequestParam String email){
         User user = myUserDetailsService.findByEmail(email);
         emailService.sendPasswordRecoveryMail(user);
-        return "All fine";
+        return dtoService.convertToPersonDTO(user);
     }
 
-    @PostMapping("/checkTmpPassword")
+    @PostMapping("/{userId}/checkTmpPassword")
     public Boolean checkTmpPassword(@RequestBody AuthDTO authDTO){
-        return authenticationService.checkTemplePassword(authDTO);
+        return authenticationService.checkTemporaryPassword(authDTO);
     }
 
     @PostMapping("/updatePassword")

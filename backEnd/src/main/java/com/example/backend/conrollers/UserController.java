@@ -2,6 +2,8 @@ package com.example.backend.conrollers;
 
 import com.example.backend.DTO.UserDTO;
 import com.example.backend.model.User;
+import com.example.backend.repositories.UserRepository;
+import com.example.backend.services.props.DTOService;
 import com.example.backend.services.props.MyUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -18,7 +20,7 @@ import java.util.List;
 public class UserController {
 
     private final MyUserDetailsService userDetailsService;
-    private final ModelMapper modelMapper;
+    private final DTOService dtoService;
 
 
     @GetMapping("/getCurrentUser")
@@ -26,32 +28,23 @@ public class UserController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object principal = authentication.getPrincipal();
         if (principal instanceof User user) {
-            return convertToPersonDTO(user);
+            return dtoService.convertToPersonDTO(user);
         } else {
             return null;
         }
     }
 
     @PutMapping("/profile/saveUserInfo")
-    public ResponseEntity<User> saveUserInfo(@RequestBody User user){
+    public ResponseEntity<User> saveUserInfo(@RequestBody User user) {
         userDetailsService.saveNewOrUpdateExistingUser(user);
         return ResponseEntity.ok(user);
     }
 
 
-
     @GetMapping("/search")
-    public List<UserDTO> searchForFriends(@RequestParam String pattern){
+    public List<UserDTO> searchForFriends(@RequestParam String pattern) {
         List<User> userList = userDetailsService.findUserByNameOrEmail(pattern);
-        return userList.stream().map(this::convertToPersonDTO).toList();
-    }
-
-    public UserDTO convertToPersonDTO(User person) {
-        return modelMapper.map(person, UserDTO.class);
-    }
-
-    public User convertToPerson(UserDTO personDTO) {
-        return modelMapper.map(personDTO, User.class);
+        return userList.stream().map(dtoService::convertToPersonDTO).toList();
     }
 
 }

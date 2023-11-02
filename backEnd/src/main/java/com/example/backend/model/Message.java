@@ -1,9 +1,6 @@
 package com.example.backend.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Date;
@@ -12,6 +9,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Data
 @ToString
+@Entity
 public class Message {
 
     @Id
@@ -22,7 +20,6 @@ public class Message {
     private String senderId;
     private String recipientId;
     private String message;
-    private String date;
     private Status status;
 
     @Column(name = "create_at")

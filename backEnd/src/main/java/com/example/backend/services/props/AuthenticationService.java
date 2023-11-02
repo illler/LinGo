@@ -94,7 +94,7 @@ public class AuthenticationService {
         tokenRepository.saveAll(validToken);
     }
 
-    public boolean checkTemplePassword(AuthDTO authDTO) {
+    public boolean checkTemporaryPassword(AuthDTO authDTO) {
         User oldUser = repository.findByEmail(authDTO.getEmail())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         return oldUser.getPassword().equals(authDTO.getPassword());
