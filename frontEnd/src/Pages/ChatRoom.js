@@ -3,11 +3,11 @@ import {over} from 'stompjs';
 import SockJS from 'sockjs-client';
 import axios from "axios";
 import API from "../Actions/API";
+import ContextMenu from '../Actions/ContextMenu';
 import {useNavigate} from "react-router-dom";
 
 
-
-var stompClient =null;
+var stompClient = null;
 const ChatRoom = () => {
     const [privateChats, setPrivateChats] = useState(new Map());
     const [publicChats, setPublicChats] = useState([]);
@@ -16,7 +16,8 @@ const ChatRoom = () => {
         username: '',
         receivername: '',
         connected: false,
-        message: ''
+        message: '',
+        id: ''
     });
     const authToken = localStorage.getItem('authToken');
     const history = useNavigate();
@@ -39,21 +40,24 @@ const ChatRoom = () => {
         if (localStorage.getItem("authToken") === null) {
             history("/authorization");
         }
+        if(!userData.connected){
+            connect()
+        }
         console.log(userData);
     }, [userData]);
 
 
     const updateUserFromAPI = async () => {
         try {
-            const response = await axios.get('http://localhost:8080/api/v1/getCurrentUser', {
+            const response = await axios.get(API.USER.GET_INFO, {
                 headers: {
                     'Authorization': `Bearer ${authToken}`,
                 },
             });
             const firstname = response.data.firstname;
-            setUserData({ ...userData, username: firstname });
+            const id = response.data.id;
+            setUserData({ ...userData, username: firstname, id:  id});
         } catch (error) {
-            // Обработка ошибки
             console.error(error);
         }
     };
@@ -74,8 +78,6 @@ const ChatRoom = () => {
         stompClient.subscribe('/chatroom/public', onMessageReceived);
         stompClient.subscribe('/user/'+userData.username+'/private', onPrivateMessage);
         userJoin();
-        setUserData({...userData,"connected": true});
-
     }
 
     const userJoin=()=>{
@@ -83,8 +85,10 @@ const ChatRoom = () => {
             senderName: userData.username,
             status:"JOIN"
         };
+        setUserData({ ...userData, connected: true });
         stompClient.send("/app/message", {}, JSON.stringify(chatMessage));
     }
+
 
     const onMessageReceived = (payload)=>{
         var payloadData = JSON.parse(payload.body);
@@ -161,22 +165,62 @@ const ChatRoom = () => {
         setUserData({...userData,"username": value});
     }
 
-    const registerUser=()=>{
-        connect();
-    }
+    const [contextMenu, setContextMenu] = useState({
+        visible: false,
+        top: 0,
+        left: 0,
+        username: '',
+    });
+
+    const handleContextMenu = (username, e) => {
+        e.preventDefault();
+        setContextMenu({
+            visible: true,
+            top: e.clientY,
+            left: e.clientX,
+            username: username,
+        });
+    };
+
+    const closeContextMenu = () => {
+        setContextMenu({
+            ...contextMenu,
+            visible: false,
+        });
+    };
+
+    // const registerUser=()=>{
+    //     connect();
+    // }
     return (
+
         <div className="container">
             <button onClick={handleLogout}>Выход</button>
+
             {userData.connected?
                 <div className="chat-box">
                     <div className="member-list">
                         <ul>
-                            <li onClick={()=>{setTab("CHATROOM")}} className={`member ${tab==="CHATROOM" && "active"}`}>Chatroom</li>
-                            {[...privateChats.keys()].map((name,index)=>(
-                                <li onClick={()=>{setTab(name)}} className={`member ${tab===name && "active"}`} key={index}>{name}</li>
+                            <li onClick={() => { setTab("CHATROOM") }} className={`member ${tab === "CHATROOM" && "active"}`}>Chatroom</li>
+                            {[...privateChats.keys()].map((name, index) => (
+                                <li
+                                    key={index}
+                                    onContextMenu={(e) => handleContextMenu(name, e)}
+                                    onClick={() => { setTab(name) }}
+                                    className={`member ${tab === name && "active"}`}
+                                >
+                                    {name}
+                                </li>
                             ))}
                         </ul>
                     </div>
+                    <ContextMenu
+                        visible={contextMenu.visible}
+                        top={contextMenu.top}
+                        left={contextMenu.left}
+                        username={contextMenu.username}
+                        onClose={closeContextMenu}
+                    />
                     {tab==="CHATROOM" && <div className="chat-content">
                         <ul className="chat-messages">
                             {publicChats.map((chat,index)=>(
@@ -220,9 +264,9 @@ const ChatRoom = () => {
                         onChange={handleUsername}
                         hidden={true}
                     />
-                    <button type="button" onClick={registerUser}>
-                        connect
-                    </button>
+                    {/*<button type="button" onClick={registerUser}>*/}
+                    {/*    connect*/}
+                    {/*</button>*/}
                 </div>}
         </div>
     )

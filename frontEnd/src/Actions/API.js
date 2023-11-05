@@ -16,6 +16,7 @@ const API = {
         },
 
         DEMO: `${USER}/demo`,
+        GET_INFO: `${USER}/getCurrentUser`
     }
 }
 
