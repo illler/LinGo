@@ -11,6 +11,8 @@ import com.example.backend.model.Role;
 import com.example.backend.model.User;
 import com.example.backend.repositories.TokenRepository;
 import com.example.backend.repositories.UserRepository;
+import com.example.backend.services.impl.EmailServiceImpl;
+import com.example.backend.services.props.AuthenticationService;
 import com.example.backend.token.Token;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -41,11 +43,14 @@ public class AuthenticationServiceTest {
     @Mock
     private AuthenticationManager authenticationManager;
 
+    @Mock
+    private EmailServiceImpl emailService;
+
     private AuthenticationService authenticationService;
 
     @BeforeEach
     void setUp() {
-        authenticationService = new AuthenticationService(userRepository, passwordEncoder, jwtService, tokenRepository, authenticationManager);
+        authenticationService = new AuthenticationService(userRepository, passwordEncoder, jwtService, tokenRepository, authenticationManager, emailService);
     }
 
     @Test

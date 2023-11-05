@@ -1,20 +1,25 @@
-package com.example.backend.services;
+package com.example.backend.services.props;
 
+import com.example.backend.DTO.AuthDTO;
 import com.example.backend.auth.AuthenticationRequest;
 import com.example.backend.auth.AuthenticationResponse;
 import com.example.backend.auth.RegisterRequest;
 import com.example.backend.config.JwtService;
-import com.example.backend.model.Role;
 import com.example.backend.model.User;
 import com.example.backend.repositories.TokenRepository;
 import com.example.backend.repositories.UserRepository;
+import com.example.backend.services.impl.EmailServiceImpl;
 import com.example.backend.token.Token;
 import com.example.backend.token.TokenType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import static com.example.backend.model.Role.USER;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +32,7 @@ public class AuthenticationService {
     private final TokenRepository tokenRepository;
 
     private final AuthenticationManager authenticationManager;
+    private final EmailServiceImpl emailService;
 
     public AuthenticationResponse register(RegisterRequest request) {
         var user = User.builder()
@@ -38,9 +44,12 @@ public class AuthenticationService {
                 .role(request.getRole())
                 .build();
         var savedUser = repository.save(user);
+        String id = user.getId();
         var jwtToken = jwtService.generateToken(user);
         saveUserToken(savedUser, jwtToken);
+        emailService.sendRegistrationMail(savedUser);
         return AuthenticationResponse.builder()
+                .id(id)
                 .token(jwtToken)
                 .build();
     }
@@ -53,10 +62,12 @@ public class AuthenticationService {
         );
         var user = repository.findByEmail(request.getEmail())
                 .orElseThrow();
+        String id = user.getId();
         var jwtToken = jwtService.generateToken(user);
         revokeAllUserToken(user);
         saveUserToken(user, jwtToken);
         return AuthenticationResponse.builder()
+                .id(id)
                 .token(jwtToken)
                 .build();
     }
@@ -83,4 +94,17 @@ public class AuthenticationService {
         tokenRepository.saveAll(validToken);
     }
 
+    public boolean checkTemporaryPassword(AuthDTO authDTO) {
+        User oldUser = repository.findByEmail(authDTO.getEmail())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        return oldUser.getPassword().equals(authDTO.getPassword());
+    }
+
+    @Transactional
+    public void updatePassword(AuthDTO authDTO){
+        User oldUser = repository.findByEmail(authDTO.getEmail())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        oldUser.setPassword(passwordEncoder.encode(authDTO.getPassword()));
+        repository.save(oldUser);
+    }
 }

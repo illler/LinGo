@@ -17,7 +17,6 @@ const DemoPage = () => {
                 }
             });
             localStorage.removeItem('authToken');
-            setIsLoggedOut(true);
             history("/")
         } catch (error) {
             console.error('Ошибка при выходе:', error);
@@ -42,7 +41,7 @@ const DemoPage = () => {
 
             fetchData();
         }
-    }, [authToken, isLoggedOut]);
+    }, [authToken]);
 
     return (
         <div>

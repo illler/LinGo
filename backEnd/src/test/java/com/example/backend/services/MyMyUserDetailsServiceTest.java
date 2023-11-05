@@ -2,6 +2,7 @@ package com.example.backend.services;
 
 import com.example.backend.model.User;
 import com.example.backend.repositories.UserRepository;
+import com.example.backend.services.props.MyUserDetailsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,7 +17,7 @@ import java.util.Optional;
 
 
 @ExtendWith(MockitoExtension.class)
-public class MyUserDetailsServiceTest {
+public class MyMyUserDetailsServiceTest {
 
 
     private MyUserDetailsService userDetailsService;
