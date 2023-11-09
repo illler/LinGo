@@ -8,20 +8,30 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 @Controller
 @RequiredArgsConstructor
 public class ChatController {
     private final SimpMessagingTemplate simpMessagingTemplate;
-    @MessageMapping("/message")
-    @SendTo("/chatroom/public")
-    public Message receiveMessage(@Payload Message message){
+
+    private static final Map<String, String> onlineUsers = new ConcurrentHashMap<>();
+
+    @MessageMapping("/send-msg")
+    @SendTo("/chat")
+    public Message sendMessage(@Payload Message message) {
+        // Логика обработки сообщения
+        simpMessagingTemplate.convertAndSend("/chat", message);
         return message;
     }
 
     @MessageMapping("/private-message")
-    public Message recMessage(@Payload Message message){
-        simpMessagingTemplate.convertAndSendToUser(message.getRecipientId(),"/private",message);
-        System.out.println(message.toString());
-        return message;
+    public void sendPrivateMessage(@Payload Message message) {
+        // Логика для отправки приватного сообщения
+        String recipientSocketId = onlineUsers.get(message.getRecipientId());
+        if (recipientSocketId != null) {
+            simpMessagingTemplate.convertAndSendToUser(recipientSocketId, "/private", message);
+        }
     }
 }
