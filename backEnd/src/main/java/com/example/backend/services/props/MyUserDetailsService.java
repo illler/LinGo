@@ -1,5 +1,6 @@
 package com.example.backend.services.props;
 
+import com.example.backend.DTO.UserDTO;
 import com.example.backend.model.User;
 import com.example.backend.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -36,5 +37,9 @@ public class MyUserDetailsService implements UserDetailsService {
 
     public void saveNewOrUpdateExistingUser(User user){
         userRepository.save(user);
+    }
+
+    public List<User> findAllUsers() {
+        return userRepository.findAll();
     }
 }

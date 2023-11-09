@@ -13,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -32,6 +33,14 @@ public class UserController {
         } else {
             return null;
         }
+    }
+
+    @GetMapping("/getAllUsers")
+    public List<UserDTO> getAllUsers(){
+        return userDetailsService.findAllUsers()
+                .stream()
+                .map(dtoService::convertToPersonDTO)
+                .toList();
     }
 
     @PutMapping("/profile/saveUserInfo")
