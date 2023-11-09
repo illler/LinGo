@@ -1,7 +1,9 @@
 package com.example.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
 
 import java.util.Date;
 
@@ -15,13 +17,12 @@ public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
-    private String senderName;
-    private String receiverName;
     private String senderId;
     private String recipientId;
     private String message;
-    private Status status;
 
     @Column(name = "create_at")
+    @CreatedDate
+    @JsonIgnore
     private Date createAt;
 }

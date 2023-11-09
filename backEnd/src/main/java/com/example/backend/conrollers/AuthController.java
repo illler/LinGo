@@ -51,20 +51,25 @@ public class AuthController {
     }
 
     @PostMapping("/recover-password")
-    public UserDTO sendNewPassword(@RequestParam String email){
+    public ResponseEntity<UserDTO> sendNewPassword(@RequestParam String email){
         User user = myUserDetailsService.findByEmail(email);
         emailService.sendPasswordRecoveryMail(user);
-        return dtoService.convertToPersonDTO(user);
+        return new ResponseEntity<>(dtoService.convertToPersonDTO(user), HttpStatus.ACCEPTED);
     }
 
     @PostMapping("/{userId}/checkTmpPassword")
-    public Boolean checkTmpPassword(@RequestBody AuthDTO authDTO){
-        return authenticationService.checkTemporaryPassword(authDTO);
+    public ResponseEntity<Boolean> checkTmpPassword(@RequestBody AuthDTO authDTO){
+        return ResponseEntity.ok(authenticationService.checkTemporaryPassword(authDTO));
     }
 
     @PostMapping("/updatePassword")
     public String updatePassword(@RequestBody AuthDTO authDTO){
         authenticationService.updatePassword(authDTO);
         return "Пароль обновлен";
+    }
+
+    @GetMapping("/demo")
+    public String demo(){
+        return "Привет, я первое приложение, которое саша задеплоил)";
     }
 }

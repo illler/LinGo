@@ -1,9 +1,6 @@
 package com.example.backend.conrollers;
 
-import com.example.backend.DTO.UserDTO;
-import com.example.backend.model.EmailDetails;
 import com.example.backend.model.MailRequest;
-import com.example.backend.model.MailType;
 import com.example.backend.services.EmailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
