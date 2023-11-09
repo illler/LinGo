@@ -17,8 +17,8 @@ public class MessageController {
 
 
     @PostMapping("/saveMessage")
-    public void saveAllMessage(@RequestBody List<Message> messages){
-        messageRepository.saveAll(messages);
+    public void saveAllMessage(@RequestBody Message messages){
+        messageRepository.save(messages);
     }
 
     @GetMapping("/receive-all-message")
