@@ -4,21 +4,18 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Data
 public class Friends {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private User user;
+    @Column(name = "user_id")
+    private String userId;
 
     @Column(name = "friend_list", columnDefinition = "TEXT[]")
-    private List<String> friends;
+    private Set<String> friends;
 
 }
 

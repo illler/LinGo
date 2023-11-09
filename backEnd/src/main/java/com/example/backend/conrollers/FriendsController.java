@@ -1,12 +1,13 @@
 package com.example.backend.conrollers;
 
 
+import com.example.backend.DTO.UserDTO;
+import com.example.backend.services.props.DTOService;
 import com.example.backend.services.props.FriendsService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/friends")
@@ -15,6 +16,7 @@ public class FriendsController {
 
 
     private final FriendsService friendsService;
+    private final DTOService dtoService;
 
 
     @PostMapping("/addFriends")
@@ -24,7 +26,18 @@ public class FriendsController {
         return "Друзья добавлены";
     }
 
-//    @PostMapping("/sendRequest")
-//    public
+    @GetMapping("friendsCheck")
+    public String friendsCheck(@RequestParam String currentUserId,
+                               @RequestParam String newFriendId){
+        return friendsService.friendsCheck(currentUserId, newFriendId);
+    }
+
+    @GetMapping("/retrieveAllFriends")
+    public List<UserDTO> retrieveAllFriends(@RequestBody String userId){
+        return friendsService.retrieveAllUserFriends(userId)
+                .stream()
+                .map(dtoService::convertToPersonDTO)
+                .toList();
+    }
 
 }

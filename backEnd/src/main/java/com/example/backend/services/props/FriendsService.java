@@ -8,9 +8,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -23,26 +23,31 @@ public class FriendsService {
         if (currentUser.equals(newFriend)) {
             throw new IllegalArgumentException("Нельзя добавить самого себя в друзья.");
         }
-
-        User user = userRepository.findById(currentUser).orElseThrow();
-        User newFriendUser = userRepository.findById(newFriend).orElseThrow();
-
-        addFriend(user, newFriendUser);
-        addFriend(newFriendUser, user);
+        addFriend(currentUser, newFriend);
+        addFriend(newFriend, currentUser);
     }
 
     @Transactional
-    protected void addFriend(User user, User user2){
-        Optional<Friends> friends = friendsRepository.findByUser(user);
+    protected void addFriend(String currentUser, String newFriendId){
+        Optional<Friends> friends = friendsRepository.findByUserId(currentUser);
         if (friends.isPresent()){
-            friends.get().getFriends().add(user2.getId());
+            friends.get().getFriends().add(newFriendId);
             friendsRepository.save(friends.get());
         }else {
             Friends newFriends = new Friends();
-            newFriends.setUser(user);
-            newFriends.setFriends(List.of(user2.getId()));
+            newFriends.setUserId(currentUser);
+            newFriends.setFriends(Set.of(newFriendId));
             friendsRepository.save(newFriends);
         }
     }
 
+    public List<User> retrieveAllUserFriends(String userId){
+        Set<String> friends = friendsRepository.findAllByUserId(userId);
+        return friends.stream().map(s -> userRepository.findById(s).orElseThrow()).toList();
+    }
+
+    public String friendsCheck(String userId, String newFriendId) {
+        Set<String> friends = friendsRepository.findAllByUserId(userId);
+        return (friends.contains(newFriendId)) ? "Друг уже добавлен": "Друг еще не добавлен";
+    }
 }

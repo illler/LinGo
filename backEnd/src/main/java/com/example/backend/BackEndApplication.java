@@ -3,6 +3,7 @@ package com.example.backend;
 
 import com.example.backend.auth.RegisterRequest;
 import com.example.backend.services.props.AuthenticationService;
+import com.example.backend.services.props.FriendsService;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -24,7 +25,7 @@ public class BackEndApplication {
             var admin = RegisterRequest.builder()
                     .firstname("Alexandr")
                     .lastname("Pyatunin")
-                    .email("tezerakt10@gmail.ru")
+                    .email("tezerakt10@gmail.com")
                     .password("1234")
                     .role(ADMIN)
                     .build();
@@ -33,7 +34,7 @@ public class BackEndApplication {
             var manager = RegisterRequest.builder()
                     .firstname("Soboleva")
                     .lastname("Elina")
-                    .email("tezerakt20@gmail.ru")
+                    .email("tezerakt20@gmail.com")
                     .password("1234")
                     .role(MANAGER)
                     .build();
@@ -42,7 +43,7 @@ public class BackEndApplication {
             var user = RegisterRequest.builder()
                     .firstname("Andrey")
                     .lastname("Zharov")
-                    .email("tezerakt30@gmail.ru")
+                    .email("tezerakt30@gmail.com")
                     .password("1234")
                     .role(USER)
                     .build();
