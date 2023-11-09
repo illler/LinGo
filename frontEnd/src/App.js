@@ -1,26 +1,19 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import RegistrationForm from './Pages/RegistrationForm';
-import AuthorizationForm from './Pages/AuthorizationForm';
-import HomePage from "./Pages/HomePage";
-import DemoPage from "./Pages/DemoPage";
-import ChatRoom from "./Pages/ChatRoom";
-import Profile from "./Pages/Profile";
+import {BrowserRouter, BrowserRouter as Router, Route, Routes} from 'react-router-dom';
+import Register from "./Pages/Register";
+import Chat from "./Pages/Chat";
+import Login from "./Pages/Login";
 
 
 const App = () => {
     return (
-            <Router>
-                <Routes>
-                    <Route path="/" element={<HomePage />} />
-                    <Route path="/demo" element={<DemoPage />} />
-                    <Route path="/registration" element={<RegistrationForm />} />
-                    <Route path="/authorization" element={<AuthorizationForm />} />
-                    <Route path="/chat" element={<ChatRoom />} />
-                    <Route path="/profile/:id" element={<Profile />} />
-
-                </Routes>
-            </Router>
+           <BrowserRouter>
+               <Routes>
+                   <Route path="/register" element={<Register />}/>
+                   <Route path="/login" element={<Login />}/>
+                   <Route path="/" element={<Chat />}/>
+               </Routes>
+           </BrowserRouter>
     );
 };
 

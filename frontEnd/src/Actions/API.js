@@ -5,6 +5,7 @@ const host = config.host
 const ver = config.ver
 
 const USER = `${host}/api/${ver}`;
+const MESSAGE = `${host}/api/${ver}`;
 const AUTH = `${USER}/auth`;
 
 const API = {
@@ -16,7 +17,12 @@ const API = {
         },
 
         DEMO: `${USER}/demo`,
-        GET_INFO: `${USER}/getCurrentUser`
+        GET_INFO: `${USER}/getCurrentUser`,
+        GET_ALL_USERS: `${USER}/getAllUsers`
+    },
+    MESSAGE: {
+        SendMessage: `${MESSAGE}/saveMessage`,
+        GetAllMessages:`${MESSAGE}/receive-all-message`
     }
 }
 
