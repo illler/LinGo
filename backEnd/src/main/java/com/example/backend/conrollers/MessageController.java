@@ -24,6 +24,6 @@ public class MessageController {
 
     @GetMapping("/receive-all-message")
     public List<Message> receiveAllMessage(@RequestBody Map<String, String> payload){
-        return messageRepository.findAllBySenderIdaAndAndRecipientId(payload.get("senderId"), payload.get("recipientId"));
+        return messageRepository.findAllBySenderIdAndRecipientId(payload.get("senderId"), payload.get("recipientId"));
     }
 }
