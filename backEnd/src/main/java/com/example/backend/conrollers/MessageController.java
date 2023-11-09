@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/")
@@ -22,7 +23,7 @@ public class MessageController {
     }
 
     @GetMapping("/receive-all-message")
-    public List<Message> receiveAllMessage(@RequestBody String id){
-        return messageRepository.findAllBySenderId(id);
+    public List<Message> receiveAllMessage(@RequestBody Map<String, String> payload){
+        return messageRepository.findAllBySenderIdaAndAndRecipientId(payload.get("senderId"), payload.get("recipientId"));
     }
 }
