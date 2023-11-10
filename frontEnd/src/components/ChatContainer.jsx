@@ -1,38 +1,44 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect, useRef} from "react";
 import styled from "styled-components";
 import Logout from "./Logout";
 import ChatInput from "./ChatInput";
 import axios from "axios";
 import API from "../Actions/API";
+import {v4 as uuidv4} from "uuid";
 
-export default function ChatContainer({currentChat, currentUser}) {
+export default function ChatContainer({currentChat, currentUser, socket}) {
 
-    const [messages, setMessages] = useState([])
+    const [messages, setMessages] = useState([]);
+    const [arrivalMessage, setArrivalMessage] = useState(null)
+    const scrollRef = useRef();
+
     useEffect(() => {
-        async function fetchMessages(senderId, recipientId) {
-            try {
-                const queryParams = new URLSearchParams({
-                    senderId,
-                    recipientId,
-                }).toString();
-                const url = `http://localhost:8080/api/v1/receive-all-message?${queryParams}`;
+        if(currentChat){
+            async function fetchMessages(senderId, recipientId) {
+                try {
+                    const queryParams = new URLSearchParams({
+                        senderId,
+                        recipientId,
+                    }).toString();
+                    const url = `http://localhost:8080/api/v1/receive-all-message?${queryParams}`;
 
-                const response = await axios.get(url, {
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${localStorage.getItem('authToken')}`,
-                    }
-                });
-                setMessages(response.data);
-            } catch (error) {
-                console.error('Ошибка при получении сообщений:', error);
+                    const response = await axios.get(url, {
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+                        }
+                    });
+                    setMessages(response.data);
+                } catch (error) {
+                    console.error('Ошибка при получении сообщений:', error);
+                }
             }
-        }
 
-        if (currentChat) {
-            const senderId = currentUser.id;
-            const recipientId = currentChat.id;
-            fetchMessages(senderId, recipientId);
+            if (currentChat) {
+                const senderId = currentUser.id;
+                const recipientId = currentChat.id;
+                fetchMessages(senderId, recipientId);
+            }
         }
     }, [currentChat, currentUser]);
 
@@ -49,7 +55,33 @@ export default function ChatContainer({currentChat, currentUser}) {
                 }
             }
         )
+        // socket.current.emit("send-msg", {
+        //     to: currentUser.id,
+        //     from: currentChat.id,
+        //     message: msg,
+        // })
+        // const msgs = [...messages];
+        // msgs.push({ fromSelf: "from", message: msg});
+        // setMessages(msgs)
     }
+    // useEffect(()=>{
+    //     if(socket.current){
+    //         socket.current.on("msg-recieve", (msg)=>{
+    //             setArrivalMessage({fromself: "to", message: msg});
+    //         });
+    //
+    //     }
+    // }, []);
+    //
+    // useEffect(() => {
+    //     arrivalMessage && setMessages((prev) => [...prev, arrivalMessage])
+    //
+    // },[arrivalMessage])
+
+    // useEffect(()=> {
+    //     scrollRef.current?.scrollIntoView({behavior: "smooth"})
+    // }, [messages]);
+
 
     return (
         <>
@@ -66,6 +98,7 @@ export default function ChatContainer({currentChat, currentUser}) {
                     <div className="chat-messages">
                         {
                             messages.map((message, index) => (
+                                // <div ref={scrollRef} key={uuidv4()}>
                                     <div key={index}>
                                         <div className={`message ${message.fromSelf === 'from' ? 'from' : 'to'}`}>
                                             <div className="content">
@@ -73,6 +106,7 @@ export default function ChatContainer({currentChat, currentUser}) {
                                             </div>
                                         </div>
                                     </div>
+                                // </div>
                             ))
                         }
                     </div>

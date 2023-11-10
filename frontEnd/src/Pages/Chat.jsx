@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react"
+import React, {useEffect, useRef, useState} from "react"
 import API from "../Actions/API";
 import axios from "axios";
 import {useNavigate} from "react-router-dom";
@@ -6,9 +6,12 @@ import styled from "styled-components"
 import Contacts from "../components/Contacts";
 import Welcome from "../components/Welcome";
 import ChatContainer from "../components/ChatContainer";
+import {io} from "socket.io-client";
+import {host} from "../config";
 
 
 export default function Chat(){
+    const socket = useRef();
     const navigate = useNavigate();
     const authToken = localStorage.getItem('authToken');
     const [contacts, setContacts] = useState([]);
@@ -45,13 +48,19 @@ export default function Chat(){
         fetchData();
     }, [navigate, authToken, setCurrentUser]);
 
+    // useEffect( () => {
+    //     if(currentUser){
+    // // Возможно что хост будет в другом формате, но вроде не должен я его из config вытаскиваю
+    //         socket.current = io(host)
+    //         socket.current.emit("add-user", currentUser.id);
+    //
+    //     }
+    //
+    // }, [currentUser])
+
     useEffect(() => {
         async function fetchData() {
             if (currentUser) {
-                // if (currentUser.isAvatarImageSet) {
-                //     try {
-                //         const data = await axios.get(`${allUsersRoute}/${currentUser._id}`);
-                //         // Обработка данных
                 const response = await axios.get(API.USER.GET_ALL_USERS, {
                     headers: {
                         'Authorization': `Bearer ${authToken}`,
@@ -59,14 +68,8 @@ export default function Chat(){
                 });
                 console.log(response.data)
                 setContacts(response.data);
-                //     } catch (error) {
-                //         console.error('Ошибка при получении данных:', error);
-                //         // Обработка ошибок
-                //     }
-                // }
             }
         }
-
         console.log(contacts)
         fetchData();
     }, [currentUser]);
@@ -84,7 +87,11 @@ export default function Chat(){
                     isLoaded && currentChat === undefined ? (
                     <Welcome currentUser = {currentUser}/>
                     ) : (
-                     <ChatContainer currentChat = {currentChat} currentUser = {currentUser}/>
+                     <ChatContainer
+                         currentChat = {currentChat}
+                         currentUser = {currentUser}
+                         // socket = {socket}
+                     />
                     )
                 }
             </div>
