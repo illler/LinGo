@@ -23,17 +23,21 @@ public class MessageService {
         messageRepository.save(message);
     }
 
-    public List<MessageDTO> receiveAllMessage(String senderId, String recipientId) {
+    public List<MessageDTO> receiveAllMessage(String sender, String recipient) {
         List<MessageDTO> messageDTOS = new ArrayList<>();
-
+        List<Message> recipientMessages = new ArrayList<>();
         List<Message> messages = messageRepository
-                .findAllBySenderIdAndRecipientIdOrderByCreateAt(senderId, recipientId);
-        mapMessagesToDTO(messageDTOS, messages, "from");
+                .findAllBySenderIdAndRecipientIdOrderByCreateAt(sender, recipient);
+        mapMessagesToDTO(messageDTOS, messages, sender);
 
-        List<Message> recipientMessages = messageRepository
-                .findAllBySenderIdAndRecipientIdOrderByCreateAt(recipientId, senderId);
-        mapMessagesToDTO(messageDTOS, recipientMessages, "to");
-
+        if (!sender.equals(recipient)) {
+             recipientMessages = messageRepository
+                    .findAllBySenderIdAndRecipientIdOrderByCreateAt(recipient, sender);
+        }
+        mapMessagesToDTO(messageDTOS, recipientMessages, recipient);
+        System.out.println(messages);
+        System.out.println("-----------------------");
+        System.out.println(recipientMessages);
         messageDTOS.sort(Comparator.comparing(MessageDTO::getCreateAt));
 
         return messageDTOS;
@@ -43,7 +47,7 @@ public class MessageService {
         for (Message message : messages) {
             MessageDTO messageDTO = new MessageDTO();
             messageDTO.setMessage(message.getMessage());
-            messageDTO.setFromSelf(fromSelf);
+            messageDTO.setUserId(fromSelf);
             messageDTO.setCreateAt(message.getCreateAt());
             messageDTOS.add(messageDTO);
         }

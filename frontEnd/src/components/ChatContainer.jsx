@@ -5,15 +5,21 @@ import ChatInput from "./ChatInput";
 import axios from "axios";
 import API from "../Actions/API";
 import {v4 as uuidv4} from "uuid";
+import SockJS from 'sockjs-client';
+import {over} from "stompjs";
 
-export default function ChatContainer({currentChat, currentUser, socket}) {
+export default function ChatContainer({currentChat, currentUser}) {
 
     const [messages, setMessages] = useState([]);
     const [arrivalMessage, setArrivalMessage] = useState(null)
     const scrollRef = useRef();
+    const [stompClient, setStompClient] = useState(null);
+    let newMessage = null;
+
 
     useEffect(() => {
         if(currentChat){
+
             async function fetchMessages(senderId, recipientId) {
                 try {
                     const queryParams = new URLSearchParams({
@@ -29,33 +35,60 @@ export default function ChatContainer({currentChat, currentUser, socket}) {
                         }
                     });
                     setMessages(response.data);
+
                 } catch (error) {
                     console.error('Ошибка при получении сообщений:', error);
                 }
             }
 
+
             if (currentChat) {
                 const senderId = currentUser.id;
                 const recipientId = currentChat.id;
                 fetchMessages(senderId, recipientId);
+                const socket = new SockJS('http://localhost:8080/ws');
+                const stomp = over(socket);
+                stomp.connect({}, () => {
+                    setStompClient(stomp);
+                    stomp.subscribe(`/user/${currentUser.id}/private`, (message) => {
+                        const receivedMessage = JSON.parse(message.body);
+                        setMessages((prevMessages) => [...prevMessages, receivedMessage]);
+                    });
+                });
             }
+
         }
     }, [currentChat, currentUser]);
 
     const handleSendMsg = async (msg) => {
+        newMessage = {
+            senderId: currentUser.id,
+            message: msg,
+        };
+
+        setMessages((prevMessages) => [...prevMessages, newMessage]);
+
+        stompClient.send('/app/private-message', {}, JSON.stringify({
+            'senderId': currentUser.id,
+            'recipientId': currentChat.id,
+            'message': msg,
+        }));
+
         await axios.post(API.MESSAGE.SendMessage, {
             senderId: currentUser.id,
             recipientId: currentChat.id,
-            message: msg
-        },
-            {
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${localStorage.getItem('authToken')}`,
-                }
-            }
-        )
-        // socket.current.emit("send-msg", {
+            message: msg,
+        }, {
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+            },
+        });
+
+
+    };
+
+    // socket.current.emit("send-msg", {
         //     to: currentUser.id,
         //     from: currentChat.id,
         //     message: msg,
@@ -63,7 +96,6 @@ export default function ChatContainer({currentChat, currentUser, socket}) {
         // const msgs = [...messages];
         // msgs.push({ fromSelf: "from", message: msg});
         // setMessages(msgs)
-    }
     // useEffect(()=>{
     //     if(socket.current){
     //         socket.current.on("msg-recieve", (msg)=>{
@@ -82,6 +114,7 @@ export default function ChatContainer({currentChat, currentUser, socket}) {
     //     scrollRef.current?.scrollIntoView({behavior: "smooth"})
     // }, [messages]);
 
+    console.log(messages.senderId, currentUser.id)
 
     return (
         <>
@@ -100,7 +133,7 @@ export default function ChatContainer({currentChat, currentUser, socket}) {
                             messages.map((message, index) => (
                                 // <div ref={scrollRef} key={uuidv4()}>
                                     <div key={index}>
-                                        <div className={`message ${message.fromSelf === 'from' ? 'from' : 'to'}`}>
+                                        <div className={`message ${message.senderId === currentUser.id ? 'from' : 'to'}`}>
                                             <div className="content">
                                                 <p>{message.message}</p>
                                             </div>

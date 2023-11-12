@@ -6,12 +6,12 @@ import styled from "styled-components"
 import Contacts from "../components/Contacts";
 import Welcome from "../components/Welcome";
 import ChatContainer from "../components/ChatContainer";
-import {io} from "socket.io-client";
-import {host} from "../config";
+import SockJS from 'sockjs-client';
+import {over} from "stompjs";
+
 
 
 export default function Chat(){
-    const socket = useRef();
     const navigate = useNavigate();
     const authToken = localStorage.getItem('authToken');
     const [contacts, setContacts] = useState([]);

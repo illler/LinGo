@@ -7,7 +7,7 @@ import java.util.Date;
 @Data
 public class MessageDTO {
 
-    private String fromSelf;
+    private String userId;
     private String message;
     private Date createAt;
 }
