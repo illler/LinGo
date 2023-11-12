@@ -27,13 +27,4 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registry.setUserDestinationPrefix("/user");
     }
 
-    @Override
-    public boolean configureMessageConverters(List<MessageConverter> messageConverters) {
-        DefaultContentTypeResolver resolver = new DefaultContentTypeResolver();
-        resolver.setDefaultMimeType(org.springframework.util.MimeTypeUtils.APPLICATION_JSON);
-        MappingJackson2MessageConverter converter = new MappingJackson2MessageConverter();
-        converter.setContentTypeResolver(resolver);
-        messageConverters.add(converter);
-        return false;
-    }
 }
