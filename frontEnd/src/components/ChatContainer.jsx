@@ -14,11 +14,10 @@ export default function ChatContainer({currentChat, currentUser}) {
     const [arrivalMessage, setArrivalMessage] = useState(null)
     const scrollRef = useRef();
     const [stompClient, setStompClient] = useState(null);
-    let newMessage = null;
 
 
     useEffect(() => {
-        if(currentChat){
+        if (currentChat) {
 
             async function fetchMessages(senderId, recipientId) {
                 try {
@@ -42,30 +41,48 @@ export default function ChatContainer({currentChat, currentUser}) {
             }
 
 
-            if (currentChat) {
-                const senderId = currentUser.id;
-                const recipientId = currentChat.id;
-                fetchMessages(senderId, recipientId);
-                const socket = new SockJS('http://localhost:8080/ws');
-                const stomp = over(socket);
-                stomp.connect({}, () => {
-                    setStompClient(stomp);
-                    stomp.subscribe(`/user/${currentUser.id}/private`, (message) => {
-                        const receivedMessage = JSON.parse(message.body);
-                        setMessages((prevMessages) => [...prevMessages, receivedMessage]);
-                    });
-                });
-            }
-
+            const senderId = currentUser.id;
+            localStorage.setItem('currentId', senderId)
+            const recipientId = currentChat.id;
+            fetchMessages(senderId, recipientId);
         }
     }, [currentChat, currentUser]);
 
+    useEffect(() => {
+        let stomp;
+
+        if (currentChat && currentUser && currentUser.id) {
+            const socket = new SockJS('http://localhost:8080/ws');
+            stomp = over(socket);
+            stomp.connect({}, () => {
+                setStompClient(stomp);
+
+                // Отключение предыдущей подписки без проверки
+                stompClient?.disconnect();
+
+                stomp.subscribe(`/user/${currentUser.id}/private`, (message) => {
+                    const receivedMessage = JSON.parse(message.body);
+                    console.log(receivedMessage)
+                    setMessages((prevMessages) => [...prevMessages, receivedMessage]);
+                });
+            });
+        }
+
+        return () => {
+            if (stomp) {
+                stomp.unsubscribe(`/user/${currentUser.id}/private`);
+            }
+        };
+    }, [currentChat, currentUser]);
+
+
+
     const handleSendMsg = async (msg) => {
-        newMessage = {
+        const newMessage = {
             senderId: currentUser.id,
             message: msg,
         };
-
+        console.log(newMessage)
         setMessages((prevMessages) => [...prevMessages, newMessage]);
 
         stompClient.send('/app/private-message', {}, JSON.stringify({
@@ -89,13 +106,13 @@ export default function ChatContainer({currentChat, currentUser}) {
     };
 
     // socket.current.emit("send-msg", {
-        //     to: currentUser.id,
-        //     from: currentChat.id,
-        //     message: msg,
-        // })
-        // const msgs = [...messages];
-        // msgs.push({ fromSelf: "from", message: msg});
-        // setMessages(msgs)
+    //     to: currentUser.id,
+    //     from: currentChat.id,
+    //     message: msg,
+    // })
+    // const msgs = [...messages];
+    // msgs.push({ fromSelf: "from", message: msg});
+    // setMessages(msgs)
     // useEffect(()=>{
     //     if(socket.current){
     //         socket.current.on("msg-recieve", (msg)=>{
@@ -114,11 +131,9 @@ export default function ChatContainer({currentChat, currentUser}) {
     //     scrollRef.current?.scrollIntoView({behavior: "smooth"})
     // }, [messages]);
 
-    console.log(messages.senderId, currentUser.id)
-
     return (
         <>
-            { currentChat && (
+            {currentChat && (
                 <Container>
                     <div className="chat-header">
                         <div className="user-details">
@@ -126,26 +141,29 @@ export default function ChatContainer({currentChat, currentUser}) {
                                 <h3>{currentChat.firstname + " " + currentChat.lastname}</h3>
                             </div>
                         </div>
-                        <Logout />
+                        <Logout/>
                     </div>
                     <div className="chat-messages">
                         {
                             messages.map((message, index) => (
                                 // <div ref={scrollRef} key={uuidv4()}>
-                                    <div key={index}>
-                                        <div className={`message ${message.senderId === currentUser.id ? 'from' : 'to'}`}>
-                                            <div className="content">
-                                                <p>{message.message}</p>
-                                            </div>
+                                <div key={index}>
+                                    <div className={`message ${
+                                        (message.userId === localStorage.getItem("currentId") ||
+                                            message.senderId===localStorage.getItem("currentId"))
+                                        ? 'from' : 'to'}`}>
+                                        <div className="content">
+                                            <p>{message.message}</p>
                                         </div>
                                     </div>
+                                </div>
                                 // </div>
                             ))
                         }
                     </div>
                     <ChatInput handleSendMsg={handleSendMsg}/>
                 </Container>
-                )
+            )
             }
         </>
     );
