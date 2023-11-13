@@ -49,16 +49,15 @@ export default function ChatContainer({currentChat, currentUser}) {
     }, [currentChat, currentUser]);
 
     useEffect(() => {
-        let stomp;
-
         if (currentChat && currentUser && currentUser.id) {
             const socket = new SockJS('http://localhost:8080/ws');
-            stomp = over(socket);
+            const stomp = over(socket);
             stomp.connect({}, () => {
                 setStompClient(stomp);
 
-                // Отключение предыдущей подписки без проверки
-                stompClient?.disconnect();
+                if (stompClient) {
+                    stompClient.unsubscribe(`/user/${currentUser.id}/private`);
+                }
 
                 stomp.subscribe(`/user/${currentUser.id}/private`, (message) => {
                     const receivedMessage = JSON.parse(message.body);
@@ -67,15 +66,7 @@ export default function ChatContainer({currentChat, currentUser}) {
                 });
             });
         }
-
-        return () => {
-            if (stomp) {
-                stomp.unsubscribe(`/user/${currentUser.id}/private`);
-            }
-        };
     }, [currentChat, currentUser]);
-
-
 
     const handleSendMsg = async (msg) => {
         const newMessage = {
@@ -149,8 +140,8 @@ export default function ChatContainer({currentChat, currentUser}) {
                                 // <div ref={scrollRef} key={uuidv4()}>
                                 <div key={index}>
                                     <div className={`message ${
-                                        (message.userId === localStorage.getItem("currentId") ||
-                                            message.senderId===localStorage.getItem("currentId"))
+                                        message.userId === localStorage.getItem("currentId") ||
+                                            message.senderId===localStorage.getItem("currentId")
                                         ? 'from' : 'to'}`}>
                                         <div className="content">
                                             <p>{message.message}</p>
