@@ -15,6 +15,7 @@ export default function ChatContainer({currentChat, currentUser}) {
     const scrollRef = useRef();
     const [stompClient, setStompClient] = useState(null);
     const [stompSubscription, setStompSubscription] = useState(null);
+    const [messagesLoaded, setMessagesLoaded] = useState(null)
 
 
     useEffect(() => {
@@ -34,12 +35,11 @@ export default function ChatContainer({currentChat, currentUser}) {
                         }
                     });
                     setMessages(response.data);
-
+                    setMessagesLoaded(true);
                 } catch (error) {
                     console.error('Ошибка при получении сообщений:', error);
                 }
             }
-
 
             const senderId = currentUser.id;
             localStorage.setItem('currentId', senderId)
@@ -57,7 +57,7 @@ export default function ChatContainer({currentChat, currentUser}) {
     }, []);
 
     useEffect(() => {
-        if (currentChat && currentUser && currentUser.id) {
+        if (currentChat && currentUser && currentUser.id && messagesLoaded) {
             const socket = new SockJS("http://localhost:8080/ws");
             const stomp = over(socket);
 
@@ -68,20 +68,19 @@ export default function ChatContainer({currentChat, currentUser}) {
             stomp.connect({}, () => {
                 setStompClient(stomp);
 
-                if (!stompSubscription) {
-                    const subscription = stomp.subscribe(
-                        `/user/${currentUser.id}/private`,
-                        (message) => {
-                            const receivedMessage = JSON.parse(message.body);
-                            console.log(receivedMessage);
-                            setMessages((prevMessages) => [...prevMessages, receivedMessage]);
-                        }
-                    );
-                    setStompSubscription(subscription);
-                }
+                const subscription = stomp.subscribe(
+                    `/user/${currentUser.id}/private`,
+                    (message) => {
+                        const receivedMessage = JSON.parse(message.body);
+                        console.log(receivedMessage);
+                        setMessages((prevMessages) => [...prevMessages, receivedMessage]);
+                    }
+                );
+                setStompSubscription(subscription);
             });
         }
-    }, [currentChat, currentUser]);
+    }, [currentChat, currentUser, messagesLoaded]);
+
 
 
 
