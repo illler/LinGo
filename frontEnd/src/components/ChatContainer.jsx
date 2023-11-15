@@ -14,11 +14,11 @@ export default function ChatContainer({currentChat, currentUser}) {
     const [arrivalMessage, setArrivalMessage] = useState(null)
     const scrollRef = useRef();
     const [stompClient, setStompClient] = useState(null);
+    const [stompSubscription, setStompSubscription] = useState(null);
 
 
     useEffect(() => {
         if (currentChat) {
-
             async function fetchMessages(senderId, recipientId) {
                 try {
                     const queryParams = new URLSearchParams({
@@ -49,24 +49,42 @@ export default function ChatContainer({currentChat, currentUser}) {
     }, [currentChat, currentUser]);
 
     useEffect(() => {
+        return () => {
+            if (stompSubscription) {
+                stompSubscription.unsubscribe();
+            }
+        };
+    }, []);
+
+    useEffect(() => {
         if (currentChat && currentUser && currentUser.id) {
-            const socket = new SockJS('http://localhost:8080/ws');
+            const socket = new SockJS("http://localhost:8080/ws");
             const stomp = over(socket);
+
+            if (stompSubscription) {
+                stompSubscription.unsubscribe();
+            }
+
             stomp.connect({}, () => {
                 setStompClient(stomp);
 
-                if (stompClient) {
-                    stompClient.unsubscribe(`/user/${currentUser.id}/private`);
+                if (!stompSubscription) {
+                    const subscription = stomp.subscribe(
+                        `/user/${currentUser.id}/private`,
+                        (message) => {
+                            const receivedMessage = JSON.parse(message.body);
+                            console.log(receivedMessage);
+                            setMessages((prevMessages) => [...prevMessages, receivedMessage]);
+                        }
+                    );
+                    setStompSubscription(subscription);
                 }
-
-                stomp.subscribe(`/user/${currentUser.id}/private`, (message) => {
-                    const receivedMessage = JSON.parse(message.body);
-                    console.log(receivedMessage)
-                    setMessages((prevMessages) => [...prevMessages, receivedMessage]);
-                });
             });
         }
     }, [currentChat, currentUser]);
+
+
+
 
     const handleSendMsg = async (msg) => {
         const newMessage = {
