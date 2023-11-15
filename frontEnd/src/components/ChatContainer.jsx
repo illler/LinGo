@@ -113,6 +113,13 @@ export default function ChatContainer({currentChat, currentUser}) {
 
     };
 
+    useEffect(() => {
+        if (messagesLoaded) {
+            scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+        }
+    }, [messagesLoaded, messages]);
+
+
     // socket.current.emit("send-msg", {
     //     to: currentUser.id,
     //     from: currentChat.id,
@@ -151,7 +158,7 @@ export default function ChatContainer({currentChat, currentUser}) {
                         </div>
                         <Logout/>
                     </div>
-                    <div className="chat-messages">
+                    <div className="chat-messages" ref={scrollRef}>
                         {
                             messages.map((message, index) => (
                                 // <div ref={scrollRef} key={uuidv4()}>
@@ -168,6 +175,7 @@ export default function ChatContainer({currentChat, currentUser}) {
                                 // </div>
                             ))
                         }
+                        <div ref={scrollRef}></div>
                     </div>
                     <ChatInput handleSendMsg={handleSendMsg}/>
                 </Container>
