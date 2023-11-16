@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import styled from "styled-components";
 import API from "../Actions/API";
 
 export default function Profile() {
     const navigate = useNavigate();
     const [currentUser, setCurrentUser] = useState(undefined);
+    const location = useLocation();
 
     useEffect(() => {
         async function fetchData() {
@@ -17,17 +18,29 @@ export default function Profile() {
             }
 
             try {
-                const response = await axios.get(API.USER.GET_INFO, {
+                const queryParams = location.state.contact.email;
+                const url = `http://localhost:8080/api/v1/search?pattern=${queryParams}`;
+                const response = await axios.get(url, {
                     headers: {
                         Authorization: `Bearer ${authToken}`,
                     },
                 });
-                setCurrentUser({
-                    id: response.data.id,
-                    firstname: response.data.firstname,
-                    lastname: response.data.lastname,
-                    email: response.data.email
-                });
+                console.log(response.data[0]);
+
+                if (response.data.length > 0) {
+                    const firstUserData = response.data[0];
+
+                    setCurrentUser({
+                        id: firstUserData.id,
+                        firstname: firstUserData.firstname,
+                        lastname: firstUserData.lastname,
+                        email: firstUserData.email,
+                    });
+
+                    console.log(currentUser);
+                } else {
+                    console.log("Пользователь не найден");
+                }
             } catch (error) {
                 console.error("Ошибка при получении данных пользователя:", error);
             }

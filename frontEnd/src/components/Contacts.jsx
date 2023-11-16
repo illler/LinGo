@@ -1,10 +1,12 @@
 import React, {useEffect, useState} from "react";
 import styled from "styled-components";
 import Logo from "../assets/logo.svg";
+import {useNavigate} from "react-router-dom";
 
 export default function Contacts({contacts, currentUser, changeChat}){
     const [currentUserName, setCurrentUserName] = useState(undefined);
     const [currentSelected, setCurrentSelected] = useState(undefined);
+    const navigate = useNavigate()
     useEffect(() => {
         if(currentUser){
             const UserName = currentUser.firstname + " " + currentUser.lastname
@@ -15,6 +17,16 @@ export default function Contacts({contacts, currentUser, changeChat}){
         setCurrentSelected(index);
         changeChat(contact)
     }
+
+    const handleContextMenu = (event, contact) => {
+        event.preventDefault();
+        event.stopPropagation();
+        setCurrentSelected(undefined);
+        event.currentTarget.setAttribute("data-context-menu", "true");
+        navigate(`/profile/${contact.id}`, { state: { contact } });
+    };
+
+
     return <>
         <Container>
             <div className="brand">
@@ -25,11 +37,12 @@ export default function Contacts({contacts, currentUser, changeChat}){
                 {contacts.map((contact, index) => {
                     return (
                         <div
+                            onContextMenu={(e) => handleContextMenu(e, contact)}
                             className={`contact ${
                                 index === currentSelected ? "selected" : ""
                             }`}
                             key={index}
-                            onClick={()=>changeCurrentChat(index, contact)}
+                            onClick={() => changeCurrentChat(index, contact)}
                         >
                             <div className="username">
                                 <h3>{contact.firstname + " " +contact.lastname}</h3>
@@ -95,8 +108,14 @@ const Container = styled.div`
           color: white;
         }
       }
+      &:hover {
+        background-color: #9a86f3;
+      }
     }
     .selected {
+      background-color: #9a86f3;
+    }
+    &[data-context-menu="true"] {
       background-color: #9a86f3;
     }
   }
