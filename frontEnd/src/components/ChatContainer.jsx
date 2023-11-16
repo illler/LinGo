@@ -7,6 +7,7 @@ import API from "../Actions/API";
 import {v4 as uuidv4} from "uuid";
 import SockJS from 'sockjs-client';
 import {over} from "stompjs";
+import {host} from "../config";
 
 export default function ChatContainer({currentChat, currentUser}) {
 
@@ -26,7 +27,7 @@ export default function ChatContainer({currentChat, currentUser}) {
                         senderId,
                         recipientId,
                     }).toString();
-                    const url = `http://localhost:8080/api/v1/receive-all-message?${queryParams}`;
+                    const url = `${API.MESSAGE.GetAllMessages}?${queryParams}`;
 
                     const response = await axios.get(url, {
                         headers: {
@@ -58,7 +59,7 @@ export default function ChatContainer({currentChat, currentUser}) {
 
     useEffect(() => {
         if (currentChat && currentUser && currentUser.id && messagesLoaded) {
-            const socket = new SockJS("http://localhost:8080/ws");
+            const socket = new SockJS(host+"/ws");
             const stomp = over(socket);
 
             if (stompSubscription) {
