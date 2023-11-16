@@ -18,7 +18,8 @@ const API = {
 
         DEMO: `${USER}/demo`,
         GET_INFO: `${USER}/getCurrentUser`,
-        GET_ALL_USERS: `${USER}/getAllUsers`
+        GET_ALL_USERS: `${USER}/getAllUsers`,
+        SEARCH_USER:  `${USER}/search`
     },
     MESSAGE: {
         SendMessage: `${MESSAGE}/saveMessage`,

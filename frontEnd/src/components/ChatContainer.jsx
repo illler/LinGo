@@ -72,14 +72,22 @@ export default function ChatContainer({currentChat, currentUser}) {
                     `/user/${currentUser.id}/private`,
                     (message) => {
                         const receivedMessage = JSON.parse(message.body);
-                        console.log(receivedMessage);
-                        setMessages((prevMessages) => [...prevMessages, receivedMessage]);
+                        if (receivedMessage.senderId === currentChat.id) {
+                            setMessages((prevMessages) => [...prevMessages, receivedMessage]);
+                        }
                     }
                 );
                 setStompSubscription(subscription);
             });
         }
+
+        return () => {
+            if (stompSubscription) {
+                stompSubscription.unsubscribe();
+            }
+        };
     }, [currentChat, currentUser, messagesLoaded]);
+
 
 
 
