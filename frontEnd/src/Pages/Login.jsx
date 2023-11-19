@@ -79,8 +79,12 @@ export default function Login() {
                     />
                     <button type="submit">Log In</button>
                     <span>
-            Don't have an account ? <Link to="/register">Create One.</Link>
-          </span>
+                        Forgot password?
+                        <Link to="/forgot-password">Сlick here.</Link>
+                    </span>
+                    <span>
+                        Don't have an account ? <Link to="/register">Create One.</Link>
+                    </span>
                 </form>
             </FormContainer>
             <ToastContainer />
