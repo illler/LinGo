@@ -15,6 +15,7 @@ export default function Register(){
         password: "",
         confirmPassword: "",
     });
+    localStorage.removeItem('authToken');
 
     const toastOptions = {
         position: "bottom-right",

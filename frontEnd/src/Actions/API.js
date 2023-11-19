@@ -5,8 +5,9 @@ const host = config.host
 const ver = config.ver
 
 const USER = `${host}/api/${ver}`;
-const MESSAGE = `${host}/api/${ver}`;
+const MESSAGE = `${host}/api/${ver}/message`;
 const AUTH = `${USER}/auth`;
+const Friends = `${host}/api/${ver}/friends`
 
 const API = {
     USER: {
@@ -17,13 +18,18 @@ const API = {
         },
 
         DEMO: `${USER}/demo`,
-        GET_INFO: `${USER}/getCurrentUser`,
-        GET_ALL_USERS: `${USER}/getAllUsers`,
-        SEARCH_USER:  `${USER}/search`
+        GET_INFO: `${USER}/user/getCurrentUser`,
+        GET_ALL_USERS: `${USER}/user/getAllUsers`,
+        SEARCH_USER:  `${USER}/user/search`
     },
     MESSAGE: {
         SendMessage: `${MESSAGE}/saveMessage`,
         GetAllMessages:`${MESSAGE}/receive-all-message`
+    },
+    Friends: {
+        AddFriends: `${Friends}/addFriends`,
+        RetrieveAllFriends: `${Friends}/retrieveAllFriends`,
+        FriendsCheck: `${Friends}/friendsCheck`
     }
 }
 
