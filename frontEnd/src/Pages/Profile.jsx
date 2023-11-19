@@ -11,6 +11,8 @@ export default function Profile() {
     const authToken = localStorage.getItem('authToken');
     const [currentUser, setCurrentUser] = useState(undefined);
     const [friendList, setFriendList] = useState([]);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [searchedFriends, setSearchedFriends] = useState([]);
 
     const [isAlreadyFriend, setIsAlreadyFriend] = useState(false);
 
@@ -170,8 +172,58 @@ export default function Profile() {
         }
     };
 
+    const handleSearch = async () => {
+        const authToken = localStorage.getItem("authToken");
+
+        try {
+            const response = await axios.get(API.USER.SEARCH_USER, {
+                params: {
+                    pattern: searchTerm,
+                },
+                headers: {
+                    Authorization: `Bearer ${authToken}`,
+                },
+            });
+
+            setSearchedFriends(response.data);
+        } catch (error) {
+            console.error("Error searching friends:", error);
+        }
+    };
+    const navigateToProfile = (friend) => {
+        navigate(`/profile/${friend.id}`, { state: { contact: friend } });
+    };
+
     return (
         <ProfileContainer>
+            <BackButton onClick={() => navigate("/")}>Back to Chat</BackButton>
+            {currentUser && profileUser && profileUser.id === currentUser.id && (
+                <>
+                    <SearchContainer>
+                        <input
+                            type="text"
+                            placeholder="Search friends..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                        />
+                        <button onClick={handleSearch}>Search</button>
+                    </SearchContainer>
+
+                    {searchedFriends.length > 0 && (
+                        <SearchedFriendsContainer>
+                            <p>Searched Friends:</p>
+                            {searchedFriends.map((friend) => (
+                                <div key={friend.id}>
+                                    {friend.firstname} {friend.lastname}
+                                    <button onClick={() => navigateToProfile(friend)}>
+                                        Go to Profile
+                                    </button>
+                                </div>
+                            ))}
+                        </SearchedFriendsContainer>
+                    )}
+                </>
+            )}
             {profileUser ? (
                 <ProfileCard>
                     <Avatar src="logo.svg" alt="User Avatar" />
@@ -225,9 +277,14 @@ export default function Profile() {
 
 const ProfileContainer = styled.div`
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+  > * {
+    margin-bottom: 1.5rem;
+  }
   height: 100vh;
+  width: 100vw;
 `;
 
 const ProfileCard = styled.div`
@@ -264,4 +321,59 @@ const AddFriendButton = styled.button`
   border: none;
   border-radius: 4px;
   cursor: pointer;
+`;
+
+const BackButton = styled.button`
+    background-color: #2196f3;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 10px;
+`;
+
+const SearchContainer = styled.div`
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+
+  input {
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+
+  button {
+    background-color: #4caf50;
+    color: white;
+    padding: 0.5rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+`;
+
+const SearchedFriendsContainer = styled.div`
+  margin-top: 1.5rem;
+  p {
+    font-weight: bold;
+    margin-bottom: 1rem;
+  }
+
+  div {
+    margin-bottom: 1rem; 
+    display: flex;
+    align-items: center;
+
+    button {
+      margin-left: 1rem; 
+      background-color: #4caf50;
+      color: white;
+      padding: 0.5rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+  }
 `;
