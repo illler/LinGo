@@ -41,13 +41,19 @@ public class FriendsService {
         }
     }
 
-    public List<User> retrieveAllUserFriends(String userId){
-        Set<String> friends = friendsRepository.findAllByUserId(userId);
-        return friends.stream().map(s -> userRepository.findById(s).orElseThrow()).toList();
+    public List<User> retrieveAllUserFriends(String userId) {
+        Optional<Friends> friendIds = friendsRepository.findByUserId(userId);
+        return friendIds.map(friends -> friends.getFriends().stream()
+                .map(s -> userRepository.findById(s).orElseThrow())
+                .toList()).orElse(null);
     }
 
+
     public String friendsCheck(String userId, String newFriendId) {
-        Set<String> friends = friendsRepository.findAllByUserId(userId);
-        return (friends.contains(newFriendId)) ? "Друг уже добавлен": "Друг еще не добавлен";
+        Optional<Friends> friends = friendsRepository.findByUserId(userId);
+        return friends.map(value -> (value.getFriends().contains(newFriendId)) ?
+                "Друг уже добавлен" :
+                "Друг еще не добавлен")
+                .orElse(null);
     }
 }

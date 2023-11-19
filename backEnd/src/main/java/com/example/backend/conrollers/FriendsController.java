@@ -33,7 +33,7 @@ public class FriendsController {
     }
 
     @GetMapping("/retrieveAllFriends")
-    public List<UserDTO> retrieveAllFriends(@RequestBody String userId){
+    public List<UserDTO> retrieveAllFriends(@RequestParam String userId){
         return friendsService.retrieveAllUserFriends(userId)
                 .stream()
                 .map(dtoService::convertToPersonDTO)

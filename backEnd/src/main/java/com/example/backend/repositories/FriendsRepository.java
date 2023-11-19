@@ -15,6 +15,4 @@ public interface FriendsRepository extends JpaRepository<Friends, Integer> {
 
     Optional<Friends> findByUserId(String userId);
 
-    Set<String> findAllByUserId(String userId);
-
 }
