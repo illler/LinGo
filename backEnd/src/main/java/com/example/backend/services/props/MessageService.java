@@ -35,9 +35,6 @@ public class MessageService {
                     .findAllBySenderIdAndRecipientIdOrderByCreateAt(recipient, sender);
         }
         mapMessagesToDTO(messageDTOS, recipientMessages, recipient);
-        System.out.println(messages);
-        System.out.println("-----------------------");
-        System.out.println(recipientMessages);
         messageDTOS.sort(Comparator.comparing(MessageDTO::getCreateAt));
 
         return messageDTOS;
