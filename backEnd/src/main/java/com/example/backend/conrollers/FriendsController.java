@@ -27,7 +27,7 @@ public class FriendsController {
     }
 
     @GetMapping("/friendsCheck")
-    public String friendsCheck(@RequestParam String currentUserId,
+    public Boolean friendsCheck(@RequestParam String currentUserId,
                                @RequestParam String newFriendId){
         return friendsService.friendsCheck(currentUserId, newFriendId);
     }

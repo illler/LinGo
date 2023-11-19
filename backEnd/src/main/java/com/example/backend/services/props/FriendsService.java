@@ -49,11 +49,9 @@ public class FriendsService {
     }
 
 
-    public String friendsCheck(String userId, String newFriendId) {
+    public Boolean friendsCheck(String userId, String newFriendId) {
         Optional<Friends> friends = friendsRepository.findByUserId(userId);
-        return friends.map(value -> (value.getFriends().contains(newFriendId)) ?
-                "Друг уже добавлен" :
-                "Друг еще не добавлен")
+        return friends.map(value -> value.getFriends().contains(newFriendId))
                 .orElse(null);
     }
 }
