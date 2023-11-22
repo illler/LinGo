@@ -19,8 +19,9 @@ public class MessageService {
     private final MessageRepository messageRepository;
 
     @Transactional
-    public void saveMessage(Message message){
+    public Message saveMessage(Message message){
         messageRepository.save(message);
+        return message;
     }
 
     public List<MessageDTO> receiveAllMessage(String sender, String recipient) {
