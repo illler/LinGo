@@ -8,14 +8,20 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class MyUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
+
+    private final DTOService dtoService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -33,13 +39,20 @@ public class MyUserDetailsService implements UserDetailsService {
     public List<User> findUserByNameOrEmail(String pattern){
         return userRepository.findAllByEmailOrName(pattern, pattern);
     }
-
-
+    @Transactional
     public void saveNewOrUpdateExistingUser(User user){
         userRepository.save(user);
     }
 
     public List<User> findAllUsers() {
         return userRepository.findAll();
+    }
+
+    public List<UserDTO> findAllUsersByTheirIds(List<String> listId){
+        return listId.parallelStream()
+                .map(this::loadUserById)
+                .filter(Objects::nonNull)
+                .map(dtoService::convertToUserDTO)
+                .collect(Collectors.toList());
     }
 }

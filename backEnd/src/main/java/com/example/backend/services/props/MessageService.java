@@ -3,6 +3,7 @@ package com.example.backend.services.props;
 import com.example.backend.DTO.MessageDTO;
 import com.example.backend.model.Message;
 import com.example.backend.repositories.MessageRepository;
+import com.example.backend.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +18,8 @@ import java.util.List;
 public class MessageService {
 
     private final MessageRepository messageRepository;
+
+    private final UserRepository userRepository;
 
     @Transactional
     public Message saveMessage(Message message){
@@ -49,5 +52,16 @@ public class MessageService {
             messageDTO.setCreateAt(message.getCreateAt());
             messageDTOS.add(messageDTO);
         }
+    }
+
+    public List<String> receivingAllInterlocutorsId(String currentUserId) {
+        List<String> interlocutors = messageRepository.findAllUsersIdWhoDoWeHaveCorrespondenceWith(currentUserId);
+
+        List<String> interlocutor2 = messageRepository.findAllUsersIdWhoDoWriteUs(currentUserId);
+
+        interlocutors.addAll(interlocutor2);
+
+        return interlocutors;
+
     }
 }

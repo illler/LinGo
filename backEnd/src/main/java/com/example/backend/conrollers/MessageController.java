@@ -2,9 +2,11 @@ package com.example.backend.conrollers;
 
 
 import com.example.backend.DTO.MessageDTO;
+import com.example.backend.DTO.UserDTO;
 import com.example.backend.model.Message;
 import com.example.backend.repositories.MessageRepository;
 import com.example.backend.services.props.MessageService;
+import com.example.backend.services.props.MyUserDetailsService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -19,18 +21,26 @@ import java.util.*;
 public class MessageController {
 
     private final MessageService messageService;
+    private final MyUserDetailsService myUserDetailsService;
 
     @PostMapping("/saveMessage")
-    public ResponseEntity<String> saveAllMessage(@Valid @RequestBody Message messages) {
+    public ResponseEntity<String> saveMessage(@Valid @RequestBody Message messages) {
         messages.setCreateAt(new Date());
         messageService.saveMessage(messages);
         return ResponseEntity.ok("Successfully");
     }
 
     @GetMapping("/receive-all-message")
-    public List<MessageDTO> receiveAllMessage(@RequestParam("senderId") String senderId,
+    public ResponseEntity<List<MessageDTO>> receiveAllMessage(@RequestParam("senderId") String senderId,
                                               @RequestParam("recipientId") String recipientId) {
-        return messageService.receiveAllMessage(senderId, recipientId);
+        return ResponseEntity.ok(messageService.receiveAllMessage(senderId, recipientId));
     }
+
+    @GetMapping("/receiving-all-correspondence")
+    public ResponseEntity<List<UserDTO>> receivingAllCorrespondence(@RequestParam("senderId") String currentUserId){
+        List<String> usersIds = messageService.receivingAllInterlocutorsId(currentUserId);
+        return ResponseEntity.ok(myUserDetailsService.findAllUsersByTheirIds(usersIds));
+    }
+
 
 }
