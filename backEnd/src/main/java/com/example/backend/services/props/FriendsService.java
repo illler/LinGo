@@ -5,6 +5,7 @@ import com.example.backend.model.User;
 import com.example.backend.repositories.FriendsRepository;
 import com.example.backend.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -57,5 +58,12 @@ public class FriendsService {
         Optional<Friends> friends = friendsRepository.findByUserId(userId);
         return friends.map(value -> value.getFriends().contains(newFriendId))
                 .orElse(null);
+    }
+
+    @Transactional
+    public Boolean deleteFriend(String currentUserId, String friendId) {
+        Friends user = friendsRepository.findByUserId(currentUserId).orElseThrow();
+        Set<String> friends = user.getFriends();
+        return friends.remove(friendId);
     }
 }

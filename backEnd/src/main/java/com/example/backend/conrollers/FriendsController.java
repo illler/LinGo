@@ -5,6 +5,8 @@ import com.example.backend.DTO.UserDTO;
 import com.example.backend.services.props.DTOService;
 import com.example.backend.services.props.FriendsService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -39,5 +41,13 @@ public class FriendsController {
                 .map(dtoService::convertToUserDTO)
                 .toList();
     }
+
+    @DeleteMapping("/deleteFriend")
+    public ResponseEntity<Boolean> deleteFriend(@RequestParam String currentUserId,
+                                                @RequestParam String friendId){
+        return ResponseEntity.ok(friendsService.deleteFriend(currentUserId, friendId));
+    }
+
+    
 
 }
