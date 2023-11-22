@@ -36,7 +36,7 @@ public class FriendsController {
     public List<UserDTO> retrieveAllFriends(@RequestParam String userId){
         return friendsService.retrieveAllUserFriends(userId)
                 .stream()
-                .map(dtoService::convertToPersonDTO)
+                .map(dtoService::convertToUserDTO)
                 .toList();
     }
 

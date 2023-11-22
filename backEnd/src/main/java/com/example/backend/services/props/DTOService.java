@@ -12,11 +12,11 @@ public class DTOService {
 
     private final ModelMapper modelMapper;
 
-    public UserDTO convertToPersonDTO(User person) {
+    public UserDTO convertToUserDTO(User person) {
         return modelMapper.map(person, UserDTO.class);
     }
 
-    public User convertToPerson(UserDTO personDTO) {
+    public User convertToUser(UserDTO personDTO) {
         return modelMapper.map(personDTO, User.class);
     }
 }

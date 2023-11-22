@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -28,18 +29,21 @@ public class FriendsService {
     }
 
     @Transactional
-    protected void addFriend(String currentUser, String newFriendId){
+    protected void addFriend(String currentUser, String newFriendId) {
         Optional<Friends> friends = friendsRepository.findByUserId(currentUser);
-        if (friends.isPresent()){
-            friends.get().getFriends().add(newFriendId);
+        if (friends.isPresent()) {
+            Set<String> currentFriends = new HashSet<>(friends.get().getFriends());
+            currentFriends.add(newFriendId);
+            friends.get().setFriends(currentFriends);
             friendsRepository.save(friends.get());
-        }else {
+        } else {
             Friends newFriends = new Friends();
             newFriends.setUserId(currentUser);
             newFriends.setFriends(Set.of(newFriendId));
             friendsRepository.save(newFriends);
         }
     }
+
 
     public List<User> retrieveAllUserFriends(String userId) {
         Optional<Friends> friendIds = friendsRepository.findByUserId(userId);

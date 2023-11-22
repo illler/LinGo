@@ -5,7 +5,10 @@ import com.example.backend.DTO.MessageDTO;
 import com.example.backend.model.Message;
 import com.example.backend.repositories.MessageRepository;
 import com.example.backend.services.props.MessageService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -18,9 +21,10 @@ public class MessageController {
     private final MessageService messageService;
 
     @PostMapping("/saveMessage")
-    public void saveAllMessage(@RequestBody Message messages) {
+    public ResponseEntity<String> saveAllMessage(@Valid @RequestBody Message messages) {
         messages.setCreateAt(new Date());
         messageService.saveMessage(messages);
+        return ResponseEntity.ok("Successfully");
     }
 
     @GetMapping("/receive-all-message")
