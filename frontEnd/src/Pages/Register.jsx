@@ -59,7 +59,7 @@ export default function Register(){
             return false;
 
             // #TODO: исправить проверку на firstname
-        } else if (lastname.length < 3) {
+        } else if (firstname.length < 3) {
             toast.error(
                 "firstname, lastname should be greater than 3 characters.",
                 toastOptions
