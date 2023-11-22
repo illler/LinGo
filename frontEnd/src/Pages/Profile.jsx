@@ -172,6 +172,36 @@ export default function Profile() {
         }
     };
 
+    const removeFriend = async () => {
+        const authToken = localStorage.getItem("authToken");
+
+        if (!authToken) {
+            navigate("/login");
+            return;
+        }
+
+        try {
+            const response = await axios.delete(API.Friends.RemoveFriend, {
+                params: {
+                    currentUserId: currentUser.id,
+                    friendId: profileUser.id,
+                },
+                headers: {
+                    Authorization: `Bearer ${authToken}`,
+                },
+            });
+
+            if (response.status === 200) {
+                console.log("Friend removed successfully!");
+                setIsAlreadyFriend(false);
+            } else {
+                console.log("Failed to remove friend");
+            }
+        } catch (error) {
+            console.error("Error removing friend:", error);
+        }
+    };
+
     const handleSearch = async () => {
         const authToken = localStorage.getItem("authToken");
 
@@ -249,7 +279,12 @@ export default function Profile() {
                         {currentUser && profileUser.id !== currentUser.id && (
                             <>
                                 {isAlreadyFriend ? (
-                                    <p>You are friends!</p>
+                                    <div>
+                                        <p>You are friends!</p>
+                                        <DeleteFriendButton onClick={removeFriend}>
+                                            Delete Friend
+                                        </DeleteFriendButton>
+                                    </div>
                                 ) : (
                                     <AddFriendButton onClick={addFriend}>Add Friend</AddFriendButton>
                                 )}
@@ -377,3 +412,15 @@ const SearchedFriendsContainer = styled.div`
     }
   }
 `;
+
+
+const DeleteFriendButton = styled.button`
+    background-color: #f44336;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 10px;
+`;
+

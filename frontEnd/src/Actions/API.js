@@ -29,7 +29,8 @@ const API = {
     Friends: {
         AddFriends: `${Friends}/addFriends`,
         RetrieveAllFriends: `${Friends}/retrieveAllFriends`,
-        FriendsCheck: `${Friends}/friendsCheck`
+        FriendsCheck: `${Friends}/friendsCheck`,
+        RemoveFriend:  `${Friends}/deleteFriend`
     }
 }
 

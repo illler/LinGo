@@ -90,7 +90,6 @@ export default function Chat(){
                      <ChatContainer
                          currentChat = {currentChat}
                          currentUser = {currentUser}
-                         // socket = {socket}
                      />
                     )
                 }
