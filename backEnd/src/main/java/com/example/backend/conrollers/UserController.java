@@ -54,8 +54,8 @@ public class UserController {
         return userList.stream().map(dtoService::convertToUserDTO).toList();
     }
 
-    @GetMapping("/getUserInfo/{id}")
-    public UserDTO getUserInfo(@PathVariable String id){
+    @GetMapping("/getUserInfo")
+    public UserDTO getUserInfo(@RequestParam String id){
         return dtoService.convertToUserDTO(userDetailsService.loadUserById(id));
     }
 

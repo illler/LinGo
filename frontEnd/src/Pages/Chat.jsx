@@ -19,6 +19,9 @@ export default function Chat(){
     const [currentChat, setCurrentChat] = useState(undefined);
     const [isLoaded, setIsLoaded] = useState(false)
 
+    const [searchTerm, setSearchTerm] = useState("");
+    const [searchedUsers, setSearchedUsers] = useState([]);
+
     useEffect(() => {
         async function fetchData() {
             console.log(authToken)
@@ -60,8 +63,12 @@ export default function Chat(){
 
     useEffect(() => {
         async function fetchData() {
+            setContacts([]);
             if (currentUser) {
-                const response = await axios.get(API.USER.GET_ALL_USERS, {
+                const response = await axios.get(API.MESSAGE.RecieveAllCorrespondence, {
+                    params: {
+                        senderId: currentUser.id
+                    },
                     headers: {
                         'Authorization': `Bearer ${authToken}`,
                     },
@@ -79,8 +86,63 @@ export default function Chat(){
         setCurrentChat(chat)
     }
 
+    const handleSearch = async () => {
+        const authToken = localStorage.getItem("authToken");
+
+        try {
+            const response = await axios.get(API.USER.SEARCH_USER, {
+                params: {
+                    pattern: searchTerm,
+                    userId: currentUser.id,
+                },
+                headers: {
+                    Authorization: `Bearer ${authToken}`,
+                },
+            });
+
+            setSearchedUsers(response.data);
+        } catch (error) {
+            console.error("Error searching users:", error);
+        }
+    };
+
+    const addToContacts = async (user) => {
+        const isAlreadyInContacts = contacts.some((contact) => contact.id === user.id);
+
+        if (isAlreadyInContacts) {
+            console.log("User is already in contacts.");
+            return;
+        }
+        setContacts((prevContacts) => {
+            return [...prevContacts, user];
+        });
+
+        setSearchedUsers([]);
+    };
+
+
     return(
         <Container>Chat
+            <SearchInput
+                type="text"
+                placeholder="Search users..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <button onClick={handleSearch}>Search</button>
+
+            {searchedUsers.length > 0 && (
+                <SearchedUsersContainer>
+                    <p>Searched Users:</p>
+                    {searchedUsers.map((user) => (
+                        <div key={user.id}>
+                            {user.firstname} {user.lastname}
+                            <button onClick={() => addToContacts(user)}>Add to Contacts</button>
+                        </div>
+                    ))}
+                </SearchedUsersContainer>
+            )}
+
             <div className="container">
                 <Contacts contacts={contacts} currentUser={currentUser} changeChat={handleChatChange}/>
                 {
@@ -119,3 +181,33 @@ const Container = styled.div`
       grid-template-columns: 35% 65%;
     }
   }`;
+
+const SearchInput = styled.input`
+  width: 10%;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+`;
+
+const SearchedUsersContainer = styled.div`
+  p {
+    font-weight: bold;
+    color: white;
+  }
+
+  div {
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    color: white;
+
+    button {
+      background-color: #4caf50;
+      color: white;
+      padding: 0.5rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+  }
+`;

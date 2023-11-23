@@ -78,37 +78,35 @@ export default function Profile() {
             }
 
             try {
+                console.log(location.state.contact.id)
                 const response = await axios.get(
-                    API.USER.SEARCH_USER,
+                    API.USER.GET_PROFILE_INFO,
                     {
                         params: {
-                            pattern: location.state.contact.email,
+                            id: location.state.contact.id,
                         },
                         headers: {
                             Authorization: `Bearer ${authToken}`,
                         },
                     }
                 );
+                console.log(response.data)
+                const firstUserData = response.data
 
-                if (response.data.length > 0) {
-                    const firstUserData = response.data[0];
+                setProfileUser({
+                    id: firstUserData.id,
+                    firstname: firstUserData.firstname,
+                    lastname: firstUserData.lastname,
+                    email: firstUserData.email,
+                });
 
-                    setProfileUser({
-                        id: firstUserData.id,
-                        firstname: firstUserData.firstname,
-                        lastname: firstUserData.lastname,
-                        email: firstUserData.email,
-                    });
-                } else {
-                    console.log("Пользователь не найден");
-                }
             } catch (error) {
                 console.error("Ошибка при получении данных пользователя:", error);
             }
         }
 
         fetchUserProfile();
-    }, [navigate, authToken, location.state.contact.email]);
+    }, [navigate, authToken, location.state.contact.id]);
 
     useEffect(() => {
         async function fetchFriendList() {
@@ -224,6 +222,10 @@ export default function Profile() {
         navigate(`/profile/${friend.id}`, { state: { contact: friend } });
     };
 
+    const writeMessage = () => {
+        navigate(`/`, { state: { targetUser: profileUser } })
+    };
+
     return (
         <ProfileContainer>
             <BackButton onClick={() => navigate("/")}>Back to Chat</BackButton>
@@ -294,6 +296,11 @@ export default function Profile() {
                 </ProfileCard>
             ) : (
                 <p>Loading...</p>
+            )}
+            {profileUser && profileUser.id !== currentUser.id && (
+                <WriteMessageButton onClick={writeMessage}>
+                    Write a Message
+                </WriteMessageButton>
             )}
             <div>
                 <h2>Your profile</h2>
@@ -424,3 +431,13 @@ const DeleteFriendButton = styled.button`
     margin-right: 10px;
 `;
 
+
+const WriteMessageButton = styled.button`
+    background-color: #2196f3;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 10px;
+`;

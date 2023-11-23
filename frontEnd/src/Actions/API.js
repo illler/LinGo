@@ -19,12 +19,14 @@ const API = {
 
         DEMO: `${USER}/demo`,
         GET_INFO: `${USER}/user/getCurrentUser`,
+        GET_PROFILE_INFO: `${USER}/user/getUserInfo`,
         GET_ALL_USERS: `${USER}/user/getAllUsers`,
         SEARCH_USER:  `${USER}/user/search`
     },
     MESSAGE: {
         SendMessage: `${MESSAGE}/saveMessage`,
-        GetAllMessages:`${MESSAGE}/receive-all-message`
+        GetAllMessages:`${MESSAGE}/receive-all-message`,
+        RecieveAllCorrespondence: `${MESSAGE}/receiving-all-correspondence`
     },
     Friends: {
         AddFriends: `${Friends}/addFriends`,
