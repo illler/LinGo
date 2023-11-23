@@ -36,8 +36,8 @@ public class MyUserDetailsService implements UserDetailsService {
         return userRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 
-    public List<User> findUserByNameOrEmail(String pattern){
-        return userRepository.findAllByEmailOrName(pattern, pattern);
+    public List<User> findUserByNameOrEmail(String pattern, String userId){
+        return userRepository.findAllByEmailOrName(pattern, pattern, userId);
     }
     @Transactional
     public void saveNewOrUpdateExistingUser(User user){

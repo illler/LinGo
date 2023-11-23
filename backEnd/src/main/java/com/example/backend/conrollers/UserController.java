@@ -48,8 +48,9 @@ public class UserController {
 
 
     @GetMapping("/search")
-    public List<UserDTO> searchForFriends(@RequestParam String pattern) {
-        List<User> userList = userDetailsService.findUserByNameOrEmail(pattern);
+    public List<UserDTO> searchForCorrespondence(@RequestParam String pattern,
+                                                @RequestParam String userId) {
+        List<User> userList = userDetailsService.findUserByNameOrEmail(pattern, userId);
         return userList.stream().map(dtoService::convertToUserDTO).toList();
     }
 
