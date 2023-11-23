@@ -1,7 +1,7 @@
-import React, {useEffect, useRef, useState} from "react"
+import React, {useCallback, useEffect, useRef, useState} from "react"
 import API from "../Actions/API";
 import axios from "axios";
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import styled from "styled-components"
 import Contacts from "../components/Contacts";
 import Welcome from "../components/Welcome";
@@ -18,13 +18,13 @@ export default function Chat(){
     const [currentUser, setCurrentUser] = useState(undefined);
     const [currentChat, setCurrentChat] = useState(undefined);
     const [isLoaded, setIsLoaded] = useState(false)
-
+    const location = useLocation();
+    const currentChatRef = useRef(null);
     const [searchTerm, setSearchTerm] = useState("");
     const [searchedUsers, setSearchedUsers] = useState([]);
 
     useEffect(() => {
         async function fetchData() {
-            console.log(authToken)
             if (localStorage.getItem("authToken") === null) {
                 navigate("/login");
             } else {
@@ -34,13 +34,11 @@ export default function Chat(){
                             'Authorization': `Bearer ${authToken}`,
                         },
                     });
-                    console.log(response.data)
                     setCurrentUser({
                         id: response.data.id,
                         firstname: response.data.firstname,
                         lastname: response.data.lastname,
                     });
-                    console.log(currentUser)
                     setIsLoaded(true);
                 } catch (error) {
                     console.error('Ошибка при получении данных:', error);
@@ -63,7 +61,6 @@ export default function Chat(){
 
     useEffect(() => {
         async function fetchData() {
-            setContacts([]);
             if (currentUser) {
                 const response = await axios.get(API.MESSAGE.RecieveAllCorrespondence, {
                     params: {
@@ -73,17 +70,19 @@ export default function Chat(){
                         'Authorization': `Bearer ${authToken}`,
                     },
                 });
-                console.log(response.data)
                 setContacts(response.data);
+                if (!currentChat && currentChatRef.current) {
+                    setCurrentChat(currentChatRef.current);
+                }
             }
         }
-        console.log(contacts)
         fetchData();
     }, [currentUser]);
 
     const handleChatChange = (chat) =>
     {
-        setCurrentChat(chat)
+        setCurrentChat(chat);
+        currentChatRef.current = chat;
     }
 
     const handleSearch = async () => {
@@ -106,6 +105,14 @@ export default function Chat(){
         }
     };
 
+    useEffect(() => {
+        const { state } = location;
+
+        if (state && state.targetUser) {
+            currentChatRef.current = state.targetUser;
+        }
+    }, [location]);
+
     const addToContacts = async (user) => {
         const isAlreadyInContacts = contacts.some((contact) => contact.id === user.id);
 
@@ -119,6 +126,8 @@ export default function Chat(){
 
         setSearchedUsers([]);
     };
+
+
 
     const handleCurrentProfile = (currentUser) => {
         navigate(`/profile/${currentUser.id}`, { state: {contact: currentUser} });
