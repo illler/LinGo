@@ -120,6 +120,9 @@ export default function Chat(){
         setSearchedUsers([]);
     };
 
+    const handleCurrentProfile = (currentUser) => {
+        navigate(`/profile/${currentUser.id}`, { state: {contact: currentUser} });
+    }
 
     return(
         <Container>Chat
@@ -156,6 +159,9 @@ export default function Chat(){
                     )
                 }
             </div>
+            <ButtonContainer>
+                <button onClick={() => handleCurrentProfile(currentUser)}>Go Profile</button>
+            </ButtonContainer>
         </Container>
 
     )
@@ -209,5 +215,20 @@ const SearchedUsersContainer = styled.div`
       border-radius: 4px;
       cursor: pointer;
     }
+  }
+`;
+
+const ButtonContainer = styled.div`
+  margin-top: auto;
+  align-self: flex-start;
+  margin-left: 100px;
+  margin-bottom: 20px;
+  button {
+    background-color: #4caf50;
+    color: white;
+    padding: 0.7rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
   }
 `;

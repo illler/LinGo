@@ -26,7 +26,6 @@ export default function Contacts({contacts, currentUser, changeChat}){
         navigate(`/profile/${contact.id}`, { state: { contact } });
     };
 
-
     return <>
         <Container>
             <div className="brand">

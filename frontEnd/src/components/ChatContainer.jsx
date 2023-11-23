@@ -90,10 +90,6 @@ export default function ChatContainer({currentChat, currentUser}) {
     }, [currentChat, currentUser, messagesLoaded]);
 
 
-
-
-
-
     const handleSendMsg = async (msg) => {
         const newMessage = {
             senderId: currentUser.id,

@@ -207,6 +207,7 @@ export default function Profile() {
             const response = await axios.get(API.USER.SEARCH_USER, {
                 params: {
                     pattern: searchTerm,
+                    userId: currentUser.id,
                 },
                 headers: {
                     Authorization: `Bearer ${authToken}`,
