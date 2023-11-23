@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Transactional(readOnly = true)
@@ -54,10 +55,10 @@ public class MessageService {
         }
     }
 
-    public List<String> receivingAllInterlocutorsId(String currentUserId) {
-        List<String> interlocutors = messageRepository.findAllUsersIdWhoDoWeHaveCorrespondenceWith(currentUserId);
+    public Set<String> receivingAllInterlocutorsId(String currentUserId) {
+        Set<String> interlocutors = messageRepository.findAllUsersIdWhoDoWeHaveCorrespondenceWith(currentUserId);
 
-        List<String> interlocutor2 = messageRepository.findAllUsersIdWhoDoWriteUs(currentUserId);
+        Set<String> interlocutor2 = messageRepository.findAllUsersIdWhoDoWriteUs(currentUserId);
 
         interlocutors.addAll(interlocutor2);
 

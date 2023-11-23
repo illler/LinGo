@@ -38,8 +38,9 @@ public class MessageController {
 
     @GetMapping("/receiving-all-correspondence")
     public ResponseEntity<List<UserDTO>> receivingAllCorrespondence(@RequestParam("senderId") String currentUserId){
-        List<String> usersIds = messageService.receivingAllInterlocutorsId(currentUserId);
-        return ResponseEntity.ok(myUserDetailsService.findAllUsersByTheirIds(usersIds));
+        Set<String> usersIds = messageService.receivingAllInterlocutorsId(currentUserId);
+        List<String> listUserIds = usersIds.stream().toList();
+        return ResponseEntity.ok(myUserDetailsService.findAllUsersByTheirIds(listUserIds));
     }
 
 
