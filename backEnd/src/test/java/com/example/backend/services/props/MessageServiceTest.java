@@ -16,6 +16,7 @@ import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@DisplayName("Message Service Tests")
 class MessageServiceTest {
 
     @Mock
@@ -41,20 +42,27 @@ class MessageServiceTest {
     }
     @Test
     @Order(1)
+    @DisplayName("Save Message: When Message is Provided, Then Return Message")
     void testSaveMessage_whenMessageIsProvided_thenReturnMessage(){
         when(messageRepository.save(any(Message.class))).thenReturn(new Message());
 
         Message savedMessage = messageService.saveMessage(message);
 
-        assertEquals(message.getSenderId(), savedMessage.getSenderId());
-        assertEquals(message.getRecipientId(), savedMessage.getRecipientId());
-        assertEquals(message.getCreateAt(), savedMessage.getCreateAt());
-        assertEquals(message.getMessage(), savedMessage.getMessage());
+        assertEquals(message.getSenderId(), savedMessage.getSenderId(),
+                "Sender IDs should match");
+        assertEquals(message.getRecipientId(), savedMessage.getRecipientId(),
+                "Recipient IDs should match");
+        assertEquals(message.getCreateAt(), savedMessage.getCreateAt(),
+                "Creation dates should match");
+        assertEquals(message.getMessage(), savedMessage.getMessage(),
+                "Message content should match");
     }
 
     @Test
     @Order(2)
+    @DisplayName("Save Multiple Messages: When Messages Are Provided, Then All Messages Should Be Saved")
     void testSaveMultipleMessages_whenMessagesAreProvided_thenAllMessagesShouldBeSaved() {
+        // Arrange
         Message message1 = createTestMessage("sender", "recipient", "test message 1");
         Message message2 = createTestMessage("sender", "recipient", "test message 2");
         Message message3 = createTestMessage("sender", "recipient", "test message 3");
@@ -63,36 +71,35 @@ class MessageServiceTest {
         when(messageRepository.save(any(Message.class)))
                 .thenReturn(new Message());
 
+        // Act
         Message savedMessage1 = messageService.saveMessage(message1);
         Message savedMessage2 = messageService.saveMessage(message2);
         Message savedMessage3 = messageService.saveMessage(message3);
         Message savedMessage4 = messageService.saveMessage(message4);
 
-        assertEquals(message1.getSenderId(), savedMessage1.getSenderId());
-        assertEquals(message1.getRecipientId(), savedMessage1.getRecipientId());
-        assertEquals(message1.getCreateAt(), savedMessage1.getCreateAt());
-        assertEquals(message1.getMessage(), savedMessage1.getMessage());
-
-        assertEquals(message2.getSenderId(), savedMessage2.getSenderId());
-        assertEquals(message2.getRecipientId(), savedMessage2.getRecipientId());
-        assertEquals(message2.getCreateAt(), savedMessage2.getCreateAt());
-        assertEquals(message2.getMessage(), savedMessage2.getMessage());
-
-        assertEquals(message3.getSenderId(), savedMessage3.getSenderId());
-        assertEquals(message3.getRecipientId(), savedMessage3.getRecipientId());
-        assertEquals(message3.getCreateAt(), savedMessage3.getCreateAt());
-        assertEquals(message3.getMessage(), savedMessage3.getMessage());
-
-        assertEquals(message4.getSenderId(), savedMessage4.getSenderId());
-        assertEquals(message4.getRecipientId(), savedMessage4.getRecipientId());
-        assertEquals(message4.getCreateAt(), savedMessage4.getCreateAt());
-        assertEquals(message4.getMessage(), savedMessage4.getMessage());
-
+        // Assert
+        assertMessageEquality("Message 1", message1, savedMessage1);
+        assertMessageEquality("Message 2", message2, savedMessage2);
+        assertMessageEquality("Message 3", message3, savedMessage3);
+        assertMessageEquality("Message 4", message4, savedMessage4);
     }
+
+    private void assertMessageEquality(String messageDescription, Message expected, Message actual) {
+        assertEquals(expected.getSenderId(), actual.getSenderId(),
+                messageDescription + ": Sender ID should match");
+        assertEquals(expected.getRecipientId(), actual.getRecipientId(),
+                messageDescription + ": Recipient ID should match");
+        assertEquals(expected.getCreateAt(), actual.getCreateAt(),
+                messageDescription + ": Creation date should match");
+        assertEquals(expected.getMessage(), actual.getMessage(),
+                messageDescription + ": Message content should match");
+    }
+
 
 
     @Test
     @Order(3)
+    @DisplayName("Receive All Messages: When SenderId and RecipientId Are Not the Same, Then Return List MessageDTO")
     void testReceiveAllMessages_whenSenderIdAndRecipientIdIsNotTheSame_thenReturnListMessageDTO() {
         String senderId = "sender";
         String recipientId = "recipient";
@@ -108,13 +115,14 @@ class MessageServiceTest {
 
         List<MessageDTO> messageList = messageService.receiveAllMessage(senderId, recipientId);
 
-        assertNotNull(messageList);
-        assertEquals(testMessages.size(), messageList.size());
+        assertNotNull(messageList, "The returned messageList should not be null");
+        assertEquals(testMessages.size(), messageList.size(), "The size of the returned messageList should match the size of testMessages");
 
     }
 
     @Test
     @Order(3)
+    @DisplayName("Receive All Messages: When SenderId and RecipientId Are the Same, Then Return List MessageDTO")
     void testReceiveAllMessages_whenSenderIdAndRecipientIdIsTheSame_thenReturnListMessageDTO() {
         String senderId = "sender";
         String recipientId = "sender";
@@ -131,8 +139,10 @@ class MessageServiceTest {
         List<MessageDTO> messageList = messageService.receiveAllMessage(senderId, recipientId);
 
 
-        assertNotNull(messageList);
-        assertEquals(testMessages.size(), messageList.size());
+        assertNotNull(messageList, "The returned messageList should not be null");
+        assertFalse(messageList.isEmpty(), "The returned messageList should not be empty");
+        assertEquals(testMessages.size(), messageList.size(), "The size of the returned messageList should match the size of testMessages");
+
 
     }
 

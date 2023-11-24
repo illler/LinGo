@@ -23,7 +23,7 @@ public class FriendsService {
 
     public void addNewFriend(String currentUser, String newFriend) {
         if (currentUser.equals(newFriend)) {
-            throw new IllegalArgumentException("Нельзя добавить самого себя в друзья.");
+            throw new IllegalArgumentException("Current user id and friend id should not be the same");
         }
         addFriend(currentUser, newFriend);
         addFriend(newFriend, currentUser);

@@ -42,7 +42,7 @@ public class UserController {
 
     @PutMapping("/profile/saveUserInfo")
     public ResponseEntity<User> saveUserInfo(@RequestBody User user) {
-        userDetailsService.saveNewOrUpdateExistingUser(user);
+        userDetailsService.saveUserInfo(user);
         return ResponseEntity.ok(user);
     }
 

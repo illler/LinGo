@@ -14,10 +14,10 @@ public interface UserRepository extends JpaRepository<User, String> {
     Optional<User> findByEmail(String email);
 
     @Query("SELECT u FROM User u " +
-            "WHERE (u.email LIKE CONCAT(:email, '%') " +
-            "OR u.firstname LIKE CONCAT(:name, '%') " +
-            "OR u.lastname LIKE CONCAT(:name, '%')) " +
+            "WHERE (u.email LIKE CONCAT(:pattern, '%') " +
+            "OR u.firstname LIKE CONCAT(:pattern, '%') " +
+            "OR u.lastname LIKE CONCAT(:pattern, '%')) " +
             "and u.id <>:id ")
-    List<User> findAllByEmailOrName(String email, String name, String id);
+    List<User> findAllByEmailOrName(String pattern, String id);
 
 }

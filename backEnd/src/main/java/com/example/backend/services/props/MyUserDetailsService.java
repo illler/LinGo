@@ -27,21 +27,16 @@ public class MyUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
-
-    public User findByEmail(String email){
-        return userRepository.findByEmail(email).orElse(null);
-    }
-
     public User loadUserById(String id) {
         return userRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 
     public List<User> findUserByNameOrEmail(String pattern, String userId){
-        return userRepository.findAllByEmailOrName(pattern, pattern, userId);
+        return userRepository.findAllByEmailOrName(pattern, userId);
     }
     @Transactional
-    public void saveNewOrUpdateExistingUser(User user){
-        userRepository.save(user);
+    public User saveUserInfo(User user){
+        return userRepository.save(user);
     }
 
     public List<User> findAllUsers() {
