@@ -52,7 +52,8 @@ public class AuthController {
 
     @PostMapping("/recover-password")
     public ResponseEntity<UserDTO> sendNewPassword(@RequestParam String email){
-        User user = myUserDetailsService.findByEmail(email);
+//        # TODO проверить потом
+        User user = (User) myUserDetailsService.loadUserByUsername(email);
         emailService.sendPasswordRecoveryMail(user);
         return new ResponseEntity<>(dtoService.convertToUserDTO(user), HttpStatus.ACCEPTED);
     }
