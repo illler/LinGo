@@ -8,6 +8,7 @@ import Welcome from "../components/Welcome";
 import ChatContainer from "../components/ChatContainer";
 import SockJS from 'sockjs-client';
 import {over} from "stompjs";
+import Logout from "../components/Logout";
 
 
 
@@ -154,6 +155,8 @@ export default function Chat(){
                     ))}
                 </SearchedUsersContainer>
             )}
+
+            <Logout></Logout>
 
             <div className="container">
                 <Contacts contacts={contacts} currentUser={currentUser} changeChat={handleChatChange}/>

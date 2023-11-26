@@ -161,12 +161,11 @@ export default function ChatContainer({currentChat, currentUser}) {
                                 <h3>{currentChat.firstname + " " + currentChat.lastname}</h3>
                             </div>
                         </div>
-                        <Logout/>
+                        {/*<Logout/>*/}
                     </div>
                     <div className="chat-messages" ref={scrollRef}>
                         {
                             messages.map((message, index) => (
-                                // <div ref={scrollRef} key={uuidv4()}>
                                 <div key={index}>
                                     <div className={`message ${
                                         message.userId === localStorage.getItem("currentId") ||
@@ -177,7 +176,6 @@ export default function ChatContainer({currentChat, currentUser}) {
                                         </div>
                                     </div>
                                 </div>
-                                // </div>
                             ))
                         }
                         <div ref={scrollRef}></div>
