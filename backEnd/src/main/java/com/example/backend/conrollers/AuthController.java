@@ -1,6 +1,5 @@
 package com.example.backend.conrollers;
 
-import com.example.backend.DTO.AuthDTO;
 import com.example.backend.DTO.UserDTO;
 import com.example.backend.auth.AuthenticationResponse;
 import com.example.backend.auth.AuthenticationRequest;
@@ -59,13 +58,13 @@ public class AuthController {
     }
 
     @PostMapping("/{userId}/checkTmpPassword")
-    public ResponseEntity<Boolean> checkTmpPassword(@RequestBody AuthDTO authDTO){
-        return ResponseEntity.ok(authenticationService.checkTemporaryPassword(authDTO));
+    public ResponseEntity<Boolean> checkTmpPassword(@RequestBody AuthenticationRequest request){
+        return ResponseEntity.ok(authenticationService.checkTemporaryPassword(request));
     }
 
     @PostMapping("/updatePassword")
-    public String updatePassword(@RequestBody AuthDTO authDTO){
-        authenticationService.updatePassword(authDTO);
+    public String updatePassword(@RequestBody AuthenticationRequest request){
+        authenticationService.updatePassword(request);
         return "Пароль обновлен";
     }
 

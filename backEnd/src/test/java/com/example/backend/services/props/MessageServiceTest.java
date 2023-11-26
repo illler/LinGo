@@ -9,7 +9,9 @@ import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -145,7 +147,28 @@ class MessageServiceTest {
 
 
     }
+    @Test
+    @DisplayName("Retrieve All Interlocutors: When Valid User ID Provided, Then Return Set of Interlocutors")
+    void testReceivingAllInterlocutorsId() {
+        String currentUserId = "user1";
 
+        Set<String> interlocutorsFromCorrespondence = new HashSet<>(Set.of("user2", "user3"));
+        Set<String> interlocutorsFromWriteUs = new HashSet<>(Set.of("user4", "user5"));
+
+        when(messageRepository.findAllUsersIdWhoDoWeHaveCorrespondenceWith(currentUserId))
+                .thenReturn(interlocutorsFromCorrespondence);
+
+        when(messageRepository.findAllUsersIdWhoDoWriteUs(currentUserId))
+                .thenReturn(interlocutorsFromWriteUs);
+
+        Set<String> result = messageService.receivingAllInterlocutorsId(currentUserId);
+
+        assertNotNull(result, "Result should not be null");
+        assertTrue(result.containsAll(interlocutorsFromCorrespondence),
+                "Result should contain interlocutors from correspondence");
+        assertTrue(result.containsAll(interlocutorsFromWriteUs),
+                "Result should contain interlocutors from write us");
+    }
 
 
 

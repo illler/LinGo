@@ -57,12 +57,8 @@ public class MessageService {
 
     public Set<String> receivingAllInterlocutorsId(String currentUserId) {
         Set<String> interlocutors = messageRepository.findAllUsersIdWhoDoWeHaveCorrespondenceWith(currentUserId);
-
         Set<String> interlocutor2 = messageRepository.findAllUsersIdWhoDoWriteUs(currentUserId);
-
         interlocutors.addAll(interlocutor2);
-
         return interlocutors;
-
     }
 }

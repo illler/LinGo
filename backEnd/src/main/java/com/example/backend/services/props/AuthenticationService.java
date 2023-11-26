@@ -1,6 +1,5 @@
 package com.example.backend.services.props;
 
-import com.example.backend.DTO.AuthDTO;
 import com.example.backend.auth.AuthenticationRequest;
 import com.example.backend.auth.AuthenticationResponse;
 import com.example.backend.auth.RegisterRequest;
@@ -44,7 +43,7 @@ public class AuthenticationService {
                 .role(request.getRole())
                 .build();
         var savedUser = repository.save(user);
-        String id = user.getId();
+        String id = savedUser.getId();
         var jwtToken = jwtService.generateToken(user);
         saveUserToken(savedUser, jwtToken);
         emailService.sendRegistrationMail(savedUser);
@@ -55,7 +54,7 @@ public class AuthenticationService {
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
-        authenticationManager.authenticate(
+        var auth = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(), request.getPassword()
                 )
@@ -94,17 +93,17 @@ public class AuthenticationService {
         tokenRepository.saveAll(validToken);
     }
 
-    public boolean checkTemporaryPassword(AuthDTO authDTO) {
-        User oldUser = repository.findByEmail(authDTO.getEmail())
+    public boolean checkTemporaryPassword(AuthenticationRequest request) {
+        User oldUser = repository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        return (oldUser.getPassword().equals(authDTO.getPassword()));
+        return (oldUser.getPassword().equals(request.getPassword()));
     }
 
     @Transactional
-    public void updatePassword(AuthDTO authDTO){
-        User oldUser = repository.findByEmail(authDTO.getEmail())
+    public User updatePassword(AuthenticationRequest request){
+        User oldUser = repository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        oldUser.setPassword(passwordEncoder.encode(authDTO.getPassword()));
-        repository.save(oldUser);
+        oldUser.setPassword(passwordEncoder.encode(request.getPassword()));
+        return repository.save(oldUser);
     }
 }
