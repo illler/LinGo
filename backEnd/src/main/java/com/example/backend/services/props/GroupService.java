@@ -53,7 +53,7 @@ public class GroupService {
         userGroupRepository.saveAll(userGroups);
     }
 
-    private List<UserGroup> saveUserGroup(List<String> usersId, String groupId){
+    protected List<UserGroup> saveUserGroup(List<String> usersId, String groupId){
         List<UserGroup> userGroups = new ArrayList<>();
         usersId.forEach(s -> {
             UserGroup userGroup = new UserGroup();
