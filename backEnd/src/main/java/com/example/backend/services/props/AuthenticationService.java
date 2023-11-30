@@ -38,6 +38,7 @@ public class AuthenticationService {
                 .phoneNumber(request.getPhoneNumber())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(request.getRole())
+                .lang(request.getLang())
                 .build();
         var savedUser = repository.save(user);
         String id = savedUser.getId();

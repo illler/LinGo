@@ -93,7 +93,7 @@ export default function ChatContainer({currentChat, currentUser}) {
     const handleSendMsg = async (msg) => {
         const newMessage = {
             senderId: currentUser.id,
-            originalMessage: msg,
+            translatedMessage: msg,
         };
         console.log(newMessage)
         setMessages((prevMessages) => [...prevMessages, newMessage]);
@@ -172,7 +172,7 @@ export default function ChatContainer({currentChat, currentUser}) {
                                             message.senderId===localStorage.getItem("currentId")
                                         ? 'from' : 'to'}`}>
                                         <div className="content">
-                                            <p>{message.originalMessage}</p>
+                                            <p>{message.translatedMessage}</p>
                                         </div>
                                     </div>
                                 </div>
