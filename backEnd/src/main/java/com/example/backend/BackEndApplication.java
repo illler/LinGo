@@ -26,27 +26,30 @@ public class BackEndApplication {
             var admin = RegisterRequest.builder()
                     .firstname("Alexandr")
                     .lastname("Pyatunin")
-                    .email("tezerakt101@gmail.com")
+                    .email("tezerakt10@gmail.com")
                     .password("1234")
                     .role(ADMIN)
+                    .lang("ru")
                     .build();
             System.out.println("Admin token: " + service.register(admin).getToken());
 
             var manager = RegisterRequest.builder()
                     .firstname("Soboleva")
                     .lastname("Elina")
-                    .email("tezerakt201@gmail.com")
+                    .email("tezerakt20@gmail.com")
                     .password("1234")
                     .role(MANAGER)
+                    .lang("en")
                     .build();
             System.out.println("Manager token: " + service.register(manager).getToken());
 
             var user = RegisterRequest.builder()
                     .firstname("Andrey")
                     .lastname("Zharov")
-                    .email("tezerakt301@gmail.com")
+                    .email("tezerakt30@gmail.com")
                     .password("1234")
                     .role(USER)
+                    .lang("es")
                     .build();
             System.out.println("User token: " + service.register(user).getToken());
 
