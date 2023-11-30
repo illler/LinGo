@@ -93,7 +93,7 @@ export default function ChatContainer({currentChat, currentUser}) {
     const handleSendMsg = async (msg) => {
         const newMessage = {
             senderId: currentUser.id,
-            message: msg,
+            originalMessage: msg,
         };
         console.log(newMessage)
         setMessages((prevMessages) => [...prevMessages, newMessage]);
@@ -101,19 +101,19 @@ export default function ChatContainer({currentChat, currentUser}) {
         stompClient.send('/app/private-message', {}, JSON.stringify({
             'senderId': currentUser.id,
             'recipientId': currentChat.id,
-            'message': msg,
+            'originalMessage': msg,
         }));
 
-        await axios.post(API.MESSAGE.SendMessage, {
-            senderId: currentUser.id,
-            recipientId: currentChat.id,
-            message: msg,
-        }, {
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${localStorage.getItem('authToken')}`,
-            },
-        });
+        // await axios.post(API.MESSAGE.SendMessage, {
+        //     senderId: currentUser.id,
+        //     recipientId: currentChat.id,
+        //     message: msg,
+        // }, {
+        //     headers: {
+        //         "Content-Type": "application/json",
+        //         Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+        //     },
+        // });
 
 
     };
@@ -172,7 +172,7 @@ export default function ChatContainer({currentChat, currentUser}) {
                                             message.senderId===localStorage.getItem("currentId")
                                         ? 'from' : 'to'}`}>
                                         <div className="content">
-                                            <p>{message.message}</p>
+                                            <p>{message.originalMessage}</p>
                                         </div>
                                     </div>
                                 </div>

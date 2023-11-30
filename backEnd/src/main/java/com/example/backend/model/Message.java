@@ -30,7 +30,11 @@ public class Message {
     @NotEmpty(message = "Recipient id should not be empty")
     private String recipientId;
 
-    private String message;
+    @Column(name = "original-message")
+    private String originalMessage;
+
+    @Column(name = "translated-message")
+    private String translatedMessage;
 
     @Column(name = "create_at")
     @JsonIgnore

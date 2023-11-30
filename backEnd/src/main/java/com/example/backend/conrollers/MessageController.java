@@ -31,7 +31,7 @@ public class MessageController {
     }
 
     @GetMapping("/receive-all-message")
-    public ResponseEntity<List<MessageDTO>> receiveAllMessage(@RequestParam("senderId") String senderId,
+    public ResponseEntity<List<Message>> receiveAllMessage(@RequestParam("senderId") String senderId,
                                               @RequestParam("recipientId") String recipientId) {
         return ResponseEntity.ok(messageService.receiveAllMessage(senderId, recipientId));
     }

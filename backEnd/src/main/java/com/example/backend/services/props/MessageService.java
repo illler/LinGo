@@ -8,10 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -24,36 +21,36 @@ public class MessageService {
 
     @Transactional
     public Message saveMessage(Message message){
+        message.setCreateAt(new Date());
         messageRepository.save(message);
         return message;
     }
 
-    public List<MessageDTO> receiveAllMessage(String sender, String recipient) {
-        List<MessageDTO> messageDTOS = new ArrayList<>();
+    public List<Message> receiveAllMessage(String sender, String recipient) {
         List<Message> recipientMessages = new ArrayList<>();
-        List<Message> messages = messageRepository
+        List<Message> senderMessages = messageRepository
                 .findAllBySenderIdAndRecipientIdOrderByCreateAt(sender, recipient);
-        mapMessagesToDTO(messageDTOS, messages, sender);
 
         if (!sender.equals(recipient)) {
              recipientMessages = messageRepository
                     .findAllBySenderIdAndRecipientIdOrderByCreateAt(recipient, sender);
+             senderMessages.addAll(recipientMessages);
         }
-        mapMessagesToDTO(messageDTOS, recipientMessages, recipient);
-        messageDTOS.sort(Comparator.comparing(MessageDTO::getCreateAt));
 
-        return messageDTOS;
+        senderMessages.sort(Comparator.comparing(Message::getCreateAt));
+
+        return senderMessages;
     }
 
-    private void mapMessagesToDTO(List<MessageDTO> messageDTOS, List<Message> messages, String fromSelf) {
-        for (Message message : messages) {
-            MessageDTO messageDTO = new MessageDTO();
-            messageDTO.setMessage(message.getMessage());
-            messageDTO.setUserId(fromSelf);
-            messageDTO.setCreateAt(message.getCreateAt());
-            messageDTOS.add(messageDTO);
-        }
-    }
+//    private void mapMessagesToDTO(List<MessageDTO> messageDTOS, List<Message> messages, String fromSelf) {
+//        for (Message message : messages) {
+//            MessageDTO messageDTO = new MessageDTO();
+//            messageDTO.setMessage(message.getMessage());
+//            messageDTO.setUserId(fromSelf);
+//            messageDTO.setCreateAt(message.getCreateAt());
+//            messageDTOS.add(messageDTO);
+//        }
+//    }
 
     public Set<String> receivingAllInterlocutorsId(String currentUserId) {
         Set<String> interlocutors = messageRepository.findAllUsersIdWhoDoWeHaveCorrespondenceWith(currentUserId);

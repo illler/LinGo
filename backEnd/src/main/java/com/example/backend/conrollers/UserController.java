@@ -22,15 +22,17 @@ public class UserController {
 
 
     @GetMapping("/getCurrentUser")
-    public UserDTO getCurrentRole() {
+    public ResponseEntity<UserDTO> getCurrentRole() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object principal = authentication.getPrincipal();
         if (principal instanceof User user) {
-            return dtoService.convertToUserDTO(user);
+            UserDTO userDTO = dtoService.convertToUserDTO(user);
+            return ResponseEntity.ok(userDTO);
         } else {
-            return null;
+            return ResponseEntity.notFound().build();
         }
     }
+
 
     @GetMapping("/getAllUsers")
     public List<UserDTO> getAllUsers(){

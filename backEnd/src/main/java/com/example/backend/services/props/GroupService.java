@@ -21,7 +21,6 @@ public class GroupService {
 
     private final UserGroupRepository userGroupRepository;
 
-    private final UserRepository userRepository;
 
 
     public List<Group> getAllGroups(String userId) {

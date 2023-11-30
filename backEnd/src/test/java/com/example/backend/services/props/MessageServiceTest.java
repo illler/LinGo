@@ -38,7 +38,7 @@ class MessageServiceTest {
         return Message.builder()
                 .senderId(senderId)
                 .recipientId(recipientId)
-                .message(messageText)
+                .originalMessage(messageText)
                 .createAt(new Date())
                 .build();
     }
@@ -56,7 +56,7 @@ class MessageServiceTest {
                 "Recipient IDs should match");
         assertEquals(message.getCreateAt(), savedMessage.getCreateAt(),
                 "Creation dates should match");
-        assertEquals(message.getMessage(), savedMessage.getMessage(),
+        assertEquals(message.getOriginalMessage(), savedMessage.getTranslatedMessage(),
                 "Message content should match");
     }
 
@@ -93,7 +93,7 @@ class MessageServiceTest {
                 messageDescription + ": Recipient ID should match");
         assertEquals(expected.getCreateAt(), actual.getCreateAt(),
                 messageDescription + ": Creation date should match");
-        assertEquals(expected.getMessage(), actual.getMessage(),
+        assertEquals(expected.getOriginalMessage(), actual.getOriginalMessage(),
                 messageDescription + ": Message content should match");
     }
 
@@ -115,7 +115,7 @@ class MessageServiceTest {
         when(messageRepository.findAllBySenderIdAndRecipientIdOrderByCreateAt(senderId, recipientId))
                 .thenReturn(testMessages);
 
-        List<MessageDTO> messageList = messageService.receiveAllMessage(senderId, recipientId);
+        List<Message> messageList = messageService.receiveAllMessage(senderId, recipientId);
 
         assertNotNull(messageList, "The returned messageList should not be null");
         assertEquals(testMessages.size(), messageList.size(), "The size of the returned messageList should match the size of testMessages");
@@ -138,7 +138,7 @@ class MessageServiceTest {
         when(messageRepository.findAllBySenderIdAndRecipientIdOrderByCreateAt(senderId, recipientId))
                 .thenReturn(testMessages);
 
-        List<MessageDTO> messageList = messageService.receiveAllMessage(senderId, recipientId);
+        List<Message> messageList = messageService.receiveAllMessage(senderId, recipientId);
 
 
         assertNotNull(messageList, "The returned messageList should not be null");

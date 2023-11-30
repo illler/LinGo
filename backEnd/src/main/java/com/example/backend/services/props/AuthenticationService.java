@@ -3,7 +3,6 @@ package com.example.backend.services.props;
 import com.example.backend.auth.AuthenticationRequest;
 import com.example.backend.auth.AuthenticationResponse;
 import com.example.backend.auth.RegisterRequest;
-import com.example.backend.config.JwtService;
 import com.example.backend.model.User;
 import com.example.backend.repositories.TokenRepository;
 import com.example.backend.repositories.UserRepository;
@@ -17,8 +16,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import static com.example.backend.model.Role.USER;
 
 @Service
 @RequiredArgsConstructor

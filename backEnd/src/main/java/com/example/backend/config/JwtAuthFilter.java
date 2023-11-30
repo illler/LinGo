@@ -2,6 +2,7 @@ package com.example.backend.config;
 
 
 import com.example.backend.repositories.TokenRepository;
+import com.example.backend.services.props.JwtService;
 import com.example.backend.services.props.MyUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
