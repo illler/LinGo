@@ -9,7 +9,8 @@ import ChatContainer from "../components/ChatContainer";
 import SockJS from 'sockjs-client';
 import {over} from "stompjs";
 import Logout from "../components/Logout";
-
+import { useTranslation } from 'react-i18next';
+import i18n from 'i18next';
 
 
 export default function Chat(){
@@ -23,6 +24,8 @@ export default function Chat(){
     const currentChatRef = useRef(null);
     const [searchTerm, setSearchTerm] = useState("");
     const [searchedUsers, setSearchedUsers] = useState([]);
+    const { t } = useTranslation();
+
 
     useEffect(() => {
         async function fetchData() {
@@ -41,6 +44,19 @@ export default function Chat(){
                         lastname: response.data.lastname,
                     });
                     setIsLoaded(true);
+                    console.log(response.data)
+                    const userLanguage = response.data.lang;
+
+                    if (userLanguage) {
+                        const simplifiedLanguage = userLanguage.split('-')[0];
+                        i18n.changeLanguage(simplifiedLanguage)
+                            .then(() => console.log('Language changed successfully'))
+                            .catch(error => console.error('Error changing language:', error));
+                    }
+
+                    console.log(response.data);
+                    console.log('localStorage:', localStorage);
+
                 } catch (error) {
                     console.error('Ошибка при получении данных:', error);
                 }
@@ -49,6 +65,7 @@ export default function Chat(){
 
         fetchData();
     }, [navigate, authToken, setCurrentUser]);
+
 
     // useEffect( () => {
     //     if(currentUser){
@@ -135,14 +152,14 @@ export default function Chat(){
     }
 
     return(
-        <Container>Chat
+        <Container>{t('chat')}
             <SearchInput
                 type="text"
-                placeholder="Search users..."
+                placeholder={t('searchUsers')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
             />
-            <button onClick={handleSearch}>Search</button>
+            <button onClick={handleSearch}>{t('search')}</button>
 
             {searchedUsers.length > 0 && (
                 <SearchedUsersContainer>
@@ -150,7 +167,7 @@ export default function Chat(){
                     {searchedUsers.map((user) => (
                         <div key={user.id}>
                             {user.firstname} {user.lastname}
-                            <button onClick={() => addToContacts(user)}>Add to Contacts</button>
+                            <button onClick={() => addToContacts(user)}>{t('addToContacts')}</button>
                         </div>
                     ))}
                 </SearchedUsersContainer>
@@ -172,7 +189,7 @@ export default function Chat(){
                 }
             </div>
             <ButtonContainer>
-                <button onClick={() => handleCurrentProfile(currentUser)}>Go Profile</button>
+                <button onClick={() => handleCurrentProfile(currentUser)}>{t('goProfile')}</button>
             </ButtonContainer>
         </Container>
 

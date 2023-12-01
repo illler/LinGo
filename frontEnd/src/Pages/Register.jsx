@@ -28,12 +28,13 @@ export default function Register(){
     const handleSubmit = async (event)=>{
         event.preventDefault()
         if(handleValidation()){
-            const {password, firstname, lastname, email} = values
+            const {password, firstname, lastname, email, lang} = values
             const {data} = await axios.post(API.USER.AUTH.REGISTRATION,
                 {
                     firstname,
                     lastname,
                     email,
+                    lang,
                     password,
                     role:"USER",
                 });
@@ -105,6 +106,12 @@ export default function Register(){
                         type="email"
                         placeholder="Email"
                         name="email"
+                        onChange={(e) => handleChange(e)}
+                    />
+                    <input
+                        type="text"
+                        placeholder="Lang"
+                        name="lang"
                         onChange={(e) => handleChange(e)}
                     />
                     <input
