@@ -19,6 +19,8 @@ public class UserDTO {
     private String email;
     private String phoneNumber;
 
+    private String lang;
+
     @Enumerated(EnumType.STRING)
     private Role role;
 
