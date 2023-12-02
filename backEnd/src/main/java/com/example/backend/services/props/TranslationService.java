@@ -8,6 +8,8 @@ import okhttp3.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,12 +18,11 @@ import java.util.List;
 @Service
 public class TranslationService {
 
-    @Value("${application.translation.token}")
-    private String IAM_TOKEN;
     @Value("${application.translation.folder}")
     private String FOLDER_ID;
 
     public List<String> translateTexts(List<String> texts, String targetLanguage) {
+        String IAM_TOKEN = getCurrentToken();
         OkHttpClient client = new OkHttpClient();
 
         Gson gson = new Gson();
@@ -63,4 +64,13 @@ public class TranslationService {
         return translatedTexts;
     }
 
+    private String getCurrentToken(){
+        try (BufferedReader reader = new BufferedReader(new FileReader(
+                "backEnd/src/main/java/com/example/backend/services/settings/iAmToken"))) {
+            return reader.readLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

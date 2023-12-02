@@ -32,3 +32,6 @@ build/
 ### VS Code ###
 .vscode/
 /src/main/resources/application.yml
+/src/main/java/com/example/backend/services/settings/iAmToken
+/src/main/java/com/example/backend/services/settings/authKey.json
+
