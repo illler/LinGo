@@ -56,7 +56,7 @@ class MessageServiceTest {
                 "Recipient IDs should match");
         assertEquals(message.getCreateAt(), savedMessage.getCreateAt(),
                 "Creation dates should match");
-        assertEquals(message.getOriginalMessage(), savedMessage.getTranslatedMessage(),
+        assertEquals(message.getOriginalMessage(), savedMessage.getOriginalMessage(),
                 "Message content should match");
     }
 

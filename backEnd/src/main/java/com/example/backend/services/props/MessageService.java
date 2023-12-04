@@ -14,7 +14,6 @@ import java.util.*;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class MessageService {
-
     private final MessageRepository messageRepository;
 
     private final UserRepository userRepository;
@@ -27,20 +26,20 @@ public class MessageService {
     }
 
     public List<Message> receiveAllMessage(String sender, String recipient) {
-        List<Message> recipientMessages = new ArrayList<>();
-        List<Message> senderMessages = messageRepository
-                .findAllBySenderIdAndRecipientIdOrderByCreateAt(sender, recipient);
+        List<Message> senderMessages = new ArrayList<>(messageRepository
+                .findAllBySenderIdAndRecipientIdOrderByCreateAt(sender, recipient));
 
         if (!sender.equals(recipient)) {
-             recipientMessages = messageRepository
-                    .findAllBySenderIdAndRecipientIdOrderByCreateAt(recipient, sender);
-             senderMessages.addAll(recipientMessages);
+            List<Message> recipientMessages = new ArrayList<>(messageRepository
+                    .findAllBySenderIdAndRecipientIdOrderByCreateAt(recipient, sender));
+            senderMessages.addAll(recipientMessages);
         }
 
         senderMessages.sort(Comparator.comparing(Message::getCreateAt));
 
         return senderMessages;
     }
+
 
 //    private void mapMessagesToDTO(List<MessageDTO> messageDTOS, List<Message> messages, String fromSelf) {
 //        for (Message message : messages) {

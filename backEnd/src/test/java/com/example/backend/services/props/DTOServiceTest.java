@@ -41,6 +41,7 @@ class DTOServiceTest {
                 "Pyatunin",
                 "tezerakt10@gmail.com",
                 "89094563321",
+                "en",
                 Role.USER);
 
         when(modelMapper.map(user, UserDTO.class)).thenReturn(expectedUserDTO);
@@ -74,6 +75,7 @@ class DTOServiceTest {
                 "Pyatunin",
                 "tezerakt10@gmail.com",
                 "89094563321",
+                "en",
                 Role.USER);
 
         when(modelMapper.map(userDTO, User.class)).thenReturn(expectedUser);
