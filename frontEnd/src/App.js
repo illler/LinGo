@@ -5,6 +5,7 @@ import Chat from "./Pages/Chat";
 import Login from "./Pages/Login";
 import Profile from "./Pages/Profile";
 import PasswordUpdate from "./Pages/PasswordUpdate";
+import Main from "./Pages/Main";
 
 
 const App = () => {
@@ -16,6 +17,7 @@ const App = () => {
                    <Route path="/profile/:id" element={<Profile />} />
                    <Route path="/forgot-password" element={<PasswordUpdate />}/>
                    <Route path="/" element={<Chat />}/>
+                   <Route path="/Main" element={<Main />}/>
                </Routes>
            </BrowserRouter>
     );
