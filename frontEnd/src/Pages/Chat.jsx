@@ -89,14 +89,24 @@ export default function Chat(){
                     },
                 });
                 setContacts((prevContacts) => {
-                    const updatedContacts = [];
+                    const updatedContacts = [...prevContacts];
 
-                    const isTargetUserInData = response.data.some(
+                    const isTargetUserInContacts = prevContacts.some(
                         (contact) => contact.id === location.state?.targetUser?.id
                     );
-                    if (location.state?.targetUser && !isTargetUserInData) {
+
+                    if (location.state?.targetUser && !isTargetUserInContacts && !updatedContacts.some(contact => contact.id === location.state.targetUser.id)) {
                         updatedContacts.push(location.state.targetUser);
+
+                        navigate(location.pathname, { state: { targetUser: null } });
                     }
+
+                    response.data.forEach((contact) => {
+                        const isContactInContacts = updatedContacts.some((existingContact) => existingContact.id === contact.id);
+                        if (!isContactInContacts) {
+                            updatedContacts.push(contact);
+                        }
+                    });
 
                     return updatedContacts;
                 });
@@ -176,7 +186,7 @@ export default function Chat(){
 
             {searchedUsers.length > 0 && (
                 <SearchedUsersContainer>
-                    <p>Searched Users:</p>
+                    <p>{t('Searched Users:')}</p>
                     {searchedUsers.map((user) => (
                         <div key={user.id}>
                             {user.firstname} {user.lastname}
