@@ -88,12 +88,25 @@ export default function Chat(){
                         'Authorization': `Bearer ${authToken}`,
                     },
                 });
-                setContacts(response.data);
+                setContacts((prevContacts) => {
+                    const updatedContacts = [];
+
+                    const isTargetUserInData = response.data.some(
+                        (contact) => contact.id === location.state?.targetUser?.id
+                    );
+                    if (location.state?.targetUser && !isTargetUserInData) {
+                        updatedContacts.push(location.state.targetUser);
+                    }
+
+                    return updatedContacts;
+                });
+
                 if (!currentChat && currentChatRef.current) {
                     setCurrentChat(currentChatRef.current);
                 }
             }
         }
+        setContacts([]);
         fetchData();
     }, [currentUser]);
 
@@ -125,19 +138,19 @@ export default function Chat(){
 
     useEffect(() => {
         const { state } = location;
-
-        if (state && state.targetUser) {
+        if (state && state.targetUser && state.targetUser !== currentChatRef.current) {
             currentChatRef.current = state.targetUser;
         }
-    }, [location]);
+    }, [location, currentChatRef]);
 
     const addToContacts = async (user) => {
         const isAlreadyInContacts = contacts.some((contact) => contact.id === user.id);
-
+        handleChatChange(user)
         if (isAlreadyInContacts) {
             console.log("User is already in contacts.");
             return;
         }
+
         setContacts((prevContacts) => {
             return [...prevContacts, user];
         });
@@ -167,7 +180,7 @@ export default function Chat(){
                     {searchedUsers.map((user) => (
                         <div key={user.id}>
                             {user.firstname} {user.lastname}
-                            <button onClick={() => addToContacts(user)}>{t('addToContacts')}</button>
+                            <button onClick={() => addToContacts(user)}>{t('write message')}</button>
                         </div>
                     ))}
                 </SearchedUsersContainer>
