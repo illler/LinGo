@@ -19,6 +19,9 @@ export default function ChatContainer({currentChat, currentUser}) {
     const [messagesLoaded, setMessagesLoaded] = useState(null)
 
 
+    const [showOriginalMap, setShowOriginalMap] = useState({});
+
+
     useEffect(() => {
         if (currentChat) {
             async function fetchMessages(senderId, recipientId) {
@@ -92,11 +95,17 @@ export default function ChatContainer({currentChat, currentUser}) {
 
     const handleSendMsg = async (msg) => {
         const newMessage = {
+            id: uuidv4(),
             senderId: currentUser.id,
             translatedMessage: msg,
         };
         console.log(newMessage)
         setMessages((prevMessages) => [...prevMessages, newMessage]);
+        setShowOriginalMap(prevState => ({
+            ...prevState,
+            [newMessage.id]: false,
+        }));
+
 
         stompClient.send('/app/private-message', {}, JSON.stringify({
             'senderId': currentUser.id,
@@ -151,6 +160,13 @@ export default function ChatContainer({currentChat, currentUser}) {
     //     scrollRef.current?.scrollIntoView({behavior: "smooth"})
     // }, [messages]);
 
+    const handleToggleOriginal = (messageId) => {
+        setShowOriginalMap(prevState => ({
+            ...prevState,
+            [messageId]: !prevState[messageId], // Инвертирование состояния для конкретного сообщения
+        }));
+    };
+
     return (
         <>
             {currentChat && (
@@ -164,20 +180,25 @@ export default function ChatContainer({currentChat, currentUser}) {
                         {/*<Logout/>*/}
                     </div>
                     <div className="chat-messages" ref={scrollRef}>
-                        {
-                            messages.map((message, index) => (
-                                <div key={index}>
-                                    <div className={`message ${
-                                        message.userId === localStorage.getItem("currentId") ||
-                                            message.senderId===localStorage.getItem("currentId")
-                                        ? 'from' : 'to'}`}>
-                                        <div className="content">
+                        {messages.map((message) => (
+                            <div key={message.id}>
+                                <div className={`message ${message.userId === localStorage.getItem('currentId') || message.senderId === localStorage.getItem('currentId') ? 'from' : 'to'}`}>
+                                    <div className="content">
+                                        {showOriginalMap[message.id] ? (
+                                            <p>{message.originalMessage}</p>
+                                        ) : (
                                             <p>{message.translatedMessage}</p>
-                                        </div>
+                                        )}
+                                        {message.senderId !== localStorage.getItem('currentId') && (
+                                            <label>
+                                                <input type="checkbox" checked={showOriginalMap[message.id]} onChange={() => handleToggleOriginal(message.id)} />
+                                                orig
+                                            </label>
+                                        )}
                                     </div>
                                 </div>
-                            ))
-                        }
+                            </div>
+                        ))}
                         <div ref={scrollRef}></div>
                     </div>
                     <ChatInput handleSendMsg={handleSendMsg}/>
