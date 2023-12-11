@@ -1,6 +1,6 @@
 package com.example.backend.conrollers;
 
-import com.example.backend.model.UserFile;
+import com.example.backend.model.UserImageFile;
 import com.example.backend.services.props.FileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/files")
@@ -20,9 +19,9 @@ public class FilesController {
     private final FileService fileService;
 
     @PostMapping("/upload-file")
-    public ResponseEntity<?> uploadFile(@RequestParam String userId, @RequestParam Boolean isProfilePhoto,
+    public ResponseEntity<?> uploadFile(@RequestParam String userId,
                                         @RequestBody MultipartFile multipartFile) throws IOException {
-        String uploadImage = fileService.uploadImage(multipartFile, userId, isProfilePhoto);
+        String uploadImage = fileService.uploadImage(multipartFile, userId);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(uploadImage);
     }
@@ -30,9 +29,8 @@ public class FilesController {
 
     @GetMapping("/get-file")
     public ResponseEntity<?> getFile(
-            @RequestParam String userId,
-            @RequestParam Boolean isProfilePhoto) {
-        UserFile imageData = fileService.downloadImage(userId);
+            @RequestParam String userId) {
+        UserImageFile imageData = fileService.downloadImage(userId);
 
         MediaType mediaType;
         switch (imageData.getExtension()) {

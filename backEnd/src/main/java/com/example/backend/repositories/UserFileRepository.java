@@ -1,21 +1,19 @@
 package com.example.backend.repositories;
 
 import com.example.backend.model.User;
-import com.example.backend.model.UserFile;
+import com.example.backend.model.UserImageFile;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
-public interface FileRepository extends JpaRepository<UserFile, String> {
+public interface UserFileRepository extends JpaRepository<UserImageFile, String> {
 
     @Query(value = """
-      select f from UserFile f
+      select f from UserImageFile f
       where f.user = :userId
       order by f.createDate desc
       limit 1
       """)
-    UserFile findAllByUserOrderByCreateDateDesc(User userId);
+    UserImageFile findAllByUserOrderByCreateDateDesc(User userId);
 }

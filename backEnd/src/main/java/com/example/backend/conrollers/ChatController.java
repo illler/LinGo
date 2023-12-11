@@ -2,7 +2,6 @@ package com.example.backend.conrollers;
 
 import com.example.backend.model.Message;
 import com.example.backend.model.User;
-import com.example.backend.repositories.UserRepository;
 import com.example.backend.services.props.GenerateJwtForYandex;
 import com.example.backend.services.props.MessageService;
 import com.example.backend.services.props.MyUserDetailsService;
@@ -40,7 +39,7 @@ public class ChatController {
     public Message recMessage(@Payload Message message) {
         try {
             processMessage(message);
-        } catch (IndexOutOfBoundsException i) {
+        } catch (Exception i) {
             generateAndRetry(message);
         }
         return message;

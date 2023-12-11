@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Type;
 
 import java.util.Date;
 
@@ -14,7 +13,7 @@ import java.util.Date;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserFile {
+public class UserImageFile {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -25,7 +24,6 @@ public class UserFile {
 
     private String extension;
 
-    private Boolean isProfilePhoto;
 
     @Lob
     @Column(length = 1000)
