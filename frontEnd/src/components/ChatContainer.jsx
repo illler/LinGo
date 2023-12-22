@@ -9,7 +9,7 @@ import SockJS from 'sockjs-client';
 import {over} from "stompjs";
 import {host} from "../config";
 
-export default function ChatContainer({currentChat, currentUser}) {
+export default function ChatContainer({currentChat, currentUser, updateContacts}) {
 
     const [messages, setMessages] = useState([]);
     const [arrivalMessage, setArrivalMessage] = useState(null)
@@ -76,6 +76,7 @@ export default function ChatContainer({currentChat, currentUser}) {
                     `/user/${currentUser.id}/private`,
                     (message) => {
                         const receivedMessage = JSON.parse(message.body);
+
                         if (receivedMessage.senderId === currentChat.id) {
                             setMessages((prevMessages) => [...prevMessages, receivedMessage]);
                         }

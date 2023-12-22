@@ -16,6 +16,10 @@ export default function Profile() {
 
     const [isAlreadyFriend, setIsAlreadyFriend] = useState(false);
 
+    const [avatarFile, setAvatarFile] = useState(null);
+    const [avatarUrl, setAvatarUrl] = useState(null);
+
+
     useEffect(() => {
         async function checkFriendStatus() {
             if (!authToken || !currentUser || !profileUser) {
@@ -55,11 +59,15 @@ export default function Profile() {
                             'Authorization': `Bearer ${authToken}`,
                         },
                     });
-                    setCurrentUser({
-                        id: response.data.id,
-                        firstname: response.data.firstname,
-                        lastname: response.data.lastname,
-                    });
+                    if (response.data) {
+                        setCurrentUser({
+                            id: response.data.id,
+                            firstname: response.data.firstname,
+                            lastname: response.data.lastname,
+                        });
+                    } else {
+                        console.error("Не удалось получить данные текущего пользователя");
+                    }
                 } catch (error) {
                     console.error('Ошибка при получении данных:', error);
                 }
@@ -78,7 +86,6 @@ export default function Profile() {
             }
 
             try {
-                console.log(location.state.contact.id)
                 const response = await axios.get(
                     API.USER.GET_PROFILE_INFO,
                     {
@@ -90,16 +97,18 @@ export default function Profile() {
                         },
                     }
                 );
-                console.log(response.data)
                 const firstUserData = response.data
 
-                setProfileUser({
-                    id: firstUserData.id,
-                    firstname: firstUserData.firstname,
-                    lastname: firstUserData.lastname,
-                    email: firstUserData.email,
-                });
-
+                if (firstUserData) {
+                    setProfileUser({
+                        id: firstUserData.id,
+                        firstname: firstUserData.firstname,
+                        lastname: firstUserData.lastname,
+                        email: firstUserData.email,
+                    });
+                } else {
+                    console.error("Не удалось получить данные профиля пользователя");
+                }
             } catch (error) {
                 console.error("Ошибка при получении данных пользователя:", error);
             }
@@ -107,6 +116,16 @@ export default function Profile() {
 
         fetchUserProfile();
     }, [navigate, authToken, location.state.contact.id]);
+
+    useEffect(() => {
+        console.log('currentUser:', currentUser);
+        console.log('profileUser:', profileUser);
+        console.log('avatarUrl:', avatarUrl);
+
+        if (currentUser && profileUser) {
+            getFile();
+        }
+    }, [currentUser, profileUser]);
 
     useEffect(() => {
         async function fetchFriendList() {
@@ -227,6 +246,73 @@ export default function Profile() {
         navigate(`/`, { state: { targetUser: profileUser } })
     };
 
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        setAvatarFile(file);
+    };
+
+    const uploadAvatar = async () => {
+        const formData = new FormData();
+        formData.append("multipartFile", avatarFile);
+
+        try {
+            const response = await axios.post(API.Files.UPLOAD_FILE, formData, {
+                params: {
+                    userId: currentUser.id
+                },
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                    Authorization: `Bearer ${authToken}`,
+                },
+            });
+
+            if (response.status === 200) {
+                console.log("Avatar uploaded successfully!");
+            } else {
+                console.log("Failed to upload avatar");
+            }
+        } catch (error) {
+            console.error("Error uploading avatar:", error);
+        }
+    };
+
+    const getFile = async () => {
+        if (!currentUser || !currentUser.id) {
+            console.error('Current user or user ID is undefined.');
+            return;
+        }
+
+        try {
+            const response = await axios.get(API.Files.GET_FILE, {
+                params: {
+                    userId: currentUser.id
+                },
+                headers: {
+                    Authorization: `Bearer ${authToken}`,
+                },
+                responseType: 'arraybuffer',
+            });
+
+            const arrayBufferView = new Uint8Array(response.data);
+            const blob = new Blob([arrayBufferView], { type: response.headers['content-type'] });
+            const base64String = await new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.readAsDataURL(blob);
+            });
+            console.log('Avatar URL:', base64String);
+            const imageBlob = await base64String.blob();
+            const imageObjectURL = URL.createObjectURL(imageBlob);
+            setAvatarUrl(imageObjectURL);
+
+        } catch (error) {
+            console.error("Error fetching avatar:", error);
+        }
+    };
+
+
+
+
     return (
         <ProfileContainer>
             <BackButton onClick={() => navigate("/")}>Back to Chat</BackButton>
@@ -260,6 +346,8 @@ export default function Profile() {
             {profileUser ? (
                 <ProfileCard>
                     <Avatar src="logo.svg" alt="User Avatar" />
+                    {avatarUrl && <img src={avatarUrl} alt="User Avatar" />}
+
                     <UserInfo>
                         <h2>{`
                         ${profileUser.firstname} 
@@ -294,6 +382,12 @@ export default function Profile() {
                             </>
                         )}
                     </UserInfo>
+                    <AvatarInput
+                        type="file"
+                        accept="image/png, image/jpeg"
+                        onChange={handleFileChange}
+                    />
+                    <UploadAvatarButton onClick={uploadAvatar}>Upload Avatar</UploadAvatarButton>
                 </ProfileCard>
             ) : (
                 <p>Loading...</p>
@@ -441,4 +535,17 @@ const WriteMessageButton = styled.button`
     border-radius: 4px;
     cursor: pointer;
     margin-right: 10px;
+`;
+
+const AvatarInput = styled.input`
+`;
+
+const UploadAvatarButton = styled.button`
+  background-color: #2196f3;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 10px;
 `;

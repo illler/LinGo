@@ -25,6 +25,7 @@ export default function Chat(){
     const [searchTerm, setSearchTerm] = useState("");
     const [searchedUsers, setSearchedUsers] = useState([]);
     const { t } = useTranslation();
+    const [activeChats, setActiveChats] = useState([]);
 
 
     useEffect(() => {
@@ -169,6 +170,24 @@ export default function Chat(){
     };
 
 
+    const updateContacts = useCallback((chatId) => {
+        axios.get(API.MESSAGE.RecieveAllCorrespondence, {
+            params: {
+                senderId: currentUser.id
+            },
+            headers: {
+                'Authorization': `Bearer ${authToken}`,
+            },
+        })
+        .then((response) => {
+            setContacts(response.data);
+        })
+        .catch((error) => {
+            console.error("Error updating contacts:", error);
+        });
+    }, [currentUser]);
+
+
 
     const handleCurrentProfile = (currentUser) => {
         navigate(`/profile/${currentUser.id}`, { state: {contact: currentUser} });
@@ -207,6 +226,7 @@ export default function Chat(){
                      <ChatContainer
                          currentChat = {currentChat}
                          currentUser = {currentUser}
+                         updateContacts={updateContacts}
                      />
                     )
                 }

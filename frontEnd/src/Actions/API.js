@@ -8,7 +8,7 @@ const USER = `${host}/api/${ver}`;
 const MESSAGE = `${host}/api/${ver}/message`;
 const AUTH = `${USER}/auth`;
 const Friends = `${host}/api/${ver}/friends`
-
+const Files = `${host}/api/${ver}/files`
 const API = {
     USER: {
         AUTH: {
@@ -33,6 +33,11 @@ const API = {
         RetrieveAllFriends: `${Friends}/retrieveAllFriends`,
         FriendsCheck: `${Friends}/friendsCheck`,
         RemoveFriend:  `${Friends}/deleteFriend`
+    },
+
+    Files: {
+        UPLOAD_FILE: `${Files}/upload-file`,
+        GET_FILE: `${Files}/get-file`
     }
 }
 
