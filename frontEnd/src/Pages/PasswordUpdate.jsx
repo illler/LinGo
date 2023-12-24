@@ -72,39 +72,46 @@ const PasswordUpdate = () => {
 
 
     return (
-        <div>
-            <label>Email:</label>
-            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+        <body className={"PasswordForm"}>
+        <div className={"PasswordWrapperMain"}>
+            <input type="email"
+                   value={email}
+                   placeholder={('Email')}
+                   className={"PasswordInput"}
+                   onChange={(e) => setEmail(e.target.value)} />
 
             {!isTempPasswordSent && (
-                <button onClick={handleSendTempPassword}>Send Temporary Password</button>
+                <button onClick={handleSendTempPassword} className={"PasswordButton"}>Send Temporary Password</button>
             )}
 
             {isTempPasswordSent && !isTempPasswordVerified && (
-                <div>
-                    <label>Temporary Password:</label>
+                <div className={"PasswordWrapper"}>
                     <input
                         type="text"
                         value={tempPassword}
+                        placeholder={('Temporary Password')}
+                        className={"PasswordInput"}
                         onChange={(e) => setTempPassword(e.target.value)}
                     />
-                    <button onClick={handleVerifyTempPassword}>
+                    <button onClick={handleVerifyTempPassword} className={"PasswordButton"}>
                         Verify Temporary Password
                     </button>
                 </div>
             )}
 
             {isTempPasswordVerified && (
-                <div>
-                    <label>New Password:</label>
+                <div className={"PasswordWrapper"}>
                     <input type="password"
                            value={newPassword}
+                           placeholder={('New Password')}
+                           className={"PasswordInput"}
                            onChange={(e) => setNewPassword(e.target.value)}
                     />
-                    <button onClick={handleUpdatePassword}>Update Password</button>
+                    <button onClick={handleUpdatePassword} className={"PasswordButton"}>Update Password</button>
                 </div>
             )}
         </div>
+        </body>
     );
 };
 

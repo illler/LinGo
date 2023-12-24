@@ -316,46 +316,19 @@ export default function Profile() {
     return (
         <ProfileContainer>
             <BackButton onClick={() => navigate("/")}>Back to Chat</BackButton>
-            {currentUser && profileUser && profileUser.id === currentUser.id && (
-                <>
-                    <SearchContainer>
-                        <input
-                            type="text"
-                            placeholder="Search friends..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                        />
-                        <button onClick={handleSearch}>Search</button>
-                    </SearchContainer>
-
-                    {searchedFriends.length > 0 && (
-                        <SearchedFriendsContainer>
-                            <p>Searched Friends:</p>
-                            {searchedFriends.map((friend) => (
-                                <div key={friend.id}>
-                                    {friend.firstname} {friend.lastname}
-                                    <button onClick={() => navigateToProfile(friend)}>
-                                        Go to Profile
-                                    </button>
-                                </div>
-                            ))}
-                        </SearchedFriendsContainer>
-                    )}
-                </>
-            )}
             {profileUser ? (
                 <ProfileCard>
-                    <Avatar src="logo.svg" alt="User Avatar" />
-                    {avatarUrl && <img src={avatarUrl} alt="User Avatar" />}
+                    {/*<Avatar src="logo.svg" alt="User Avatar" />*/}
+                    {/*{avatarUrl && <img src={avatarUrl} alt="User Avatar" />}*/}
 
                     <UserInfo>
                         <h2>{`
                         ${profileUser.firstname} 
                         ${profileUser.lastname}
-                        ${profileUser.email}
-                      
+                    
                         `
                         }
+                        <p>{`${profileUser.email}`}</p>
                         </h2>
                         {currentUser && profileUser.id === currentUser.id && (
                             <>
@@ -382,12 +355,12 @@ export default function Profile() {
                             </>
                         )}
                     </UserInfo>
-                    <AvatarInput
-                        type="file"
-                        accept="image/png, image/jpeg"
-                        onChange={handleFileChange}
-                    />
-                    <UploadAvatarButton onClick={uploadAvatar}>Upload Avatar</UploadAvatarButton>
+                    {/*<AvatarInput*/}
+                    {/*    type="file"*/}
+                    {/*    accept="image/png, image/jpeg"*/}
+                    {/*    onChange={handleFileChange}*/}
+                    {/*/>*/}
+                    {/*<UploadAvatarButton onClick={uploadAvatar}>Upload Avatar</UploadAvatarButton>*/}
                 </ProfileCard>
             ) : (
                 <p>Loading...</p>
@@ -397,17 +370,44 @@ export default function Profile() {
                     Write a Message
                 </WriteMessageButton>
             )}
-            <div>
-                <h2>Your profile</h2>
-                {currentUser ? (
-                    <h3>{`
-                    ${currentUser.firstname} 
-                    ${currentUser.lastname}
-                `}</h3>
-                ) : (
-                    <p>Loading current user...</p>
-                )}
-            </div>
+            {/*<div>*/}
+            {/*    <h2>Your profile</h2>*/}
+            {/*    {currentUser ? (*/}
+            {/*        <h3>{`*/}
+            {/*        ${currentUser.firstname} */}
+            {/*        ${currentUser.lastname}*/}
+            {/*    `}</h3>*/}
+            {/*    ) : (*/}
+            {/*        <p>Loading current user...</p>*/}
+            {/*    )}*/}
+            {/*</div>*/}
+            {currentUser && profileUser && profileUser.id === currentUser.id && (
+                <>
+                    <SearchContainer>
+                        <input
+                            type="text"
+                            placeholder="Search friends..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                        />
+                        <button onClick={handleSearch}>Search</button>
+                    </SearchContainer>
+
+                    {searchedFriends.length > 0 && (
+                        <SearchedFriendsContainer>
+                            <p>Searched Friends</p>
+                            {searchedFriends.map((friend) => (
+                                <div key={friend.id}>
+                                    {friend.firstname} {friend.lastname}
+                                    <button onClick={() => navigateToProfile(friend)}>
+                                        Go to Profile
+                                    </button>
+                                </div>
+                            ))}
+                        </SearchedFriendsContainer>
+                    )}
+                </>
+            )}
         </ProfileContainer>
     );
 }
@@ -417,6 +417,7 @@ const ProfileContainer = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  background-color: #131324;
   > * {
     margin-bottom: 1.5rem;
   }
@@ -427,10 +428,11 @@ const ProfileContainer = styled.div`
 const ProfileCard = styled.div`
   display: flex;
   align-items: center;
-  background-color: #fff;
+  background-color: #00000076;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 20px;
+  color: white;
 `;
 
 const Avatar = styled.img`
@@ -452,7 +454,7 @@ const UserInfo = styled.div`
 `;
 
 const AddFriendButton = styled.button`
-  background-color: #4caf50;
+  background-color: #4e0eff;
   color: white;
   padding: 10px;
   border: none;
@@ -461,7 +463,7 @@ const AddFriendButton = styled.button`
 `;
 
 const BackButton = styled.button`
-    background-color: #2196f3;
+  background-color: #9a86f3;
     color: white;
     padding: 10px;
     border: none;
@@ -482,7 +484,7 @@ const SearchContainer = styled.div`
   }
 
   button {
-    background-color: #4caf50;
+    background-color: #9a86f3;
     color: white;
     padding: 0.5rem;
     border: none;
@@ -496,16 +498,18 @@ const SearchedFriendsContainer = styled.div`
   p {
     font-weight: bold;
     margin-bottom: 1rem;
+    color: white;
   }
 
   div {
     margin-bottom: 1rem; 
     display: flex;
     align-items: center;
+    color: white;
 
     button {
-      margin-left: 1rem; 
-      background-color: #4caf50;
+      margin-left: 1rem;
+      background-color: #4e0eff;
       color: white;
       padding: 0.5rem;
       border: none;

@@ -194,28 +194,33 @@ export default function Chat(){
     }
 
     return(
-        <Container>{t('chat')}
-            <SearchInput
-                type="text"
-                placeholder={t('searchUsers')}
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            <button onClick={handleSearch}>{t('search')}</button>
+        <Container>
+            <div className="navContainer">
+                <SearchInput
+                    type="text"
+                    placeholder={t('searchUsers')}
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                />
+                <button className="searchBtn" onClick={handleSearch}>{t('search')}</button>
 
+                <ButtonContainer>
+                    <button onClick={() => handleCurrentProfile(currentUser)}>{t('goProfile')}</button>
+                </ButtonContainer>
+                <Logout></Logout>
+
+            </div>
             {searchedUsers.length > 0 && (
                 <SearchedUsersContainer>
-                    <p>{t('Searched Users:')}</p>
+                    <p>{t('Searched Users')}</p>
                     {searchedUsers.map((user) => (
                         <div key={user.id}>
                             {user.firstname} {user.lastname}
-                            <button onClick={() => addToContacts(user)}>{t('write message')}</button>
+                            <button onClick={() => addToContacts(user)}>{t('Write message')}</button>
                         </div>
                     ))}
                 </SearchedUsersContainer>
             )}
-
-            <Logout></Logout>
 
             <div className="container">
                 <Contacts contacts={contacts} currentUser={currentUser} changeChat={handleChatChange}/>
@@ -231,17 +236,11 @@ export default function Chat(){
                     )
                 }
             </div>
-            <ButtonContainer>
-                <button onClick={() => handleCurrentProfile(currentUser)}>{t('goProfile')}</button>
-            </ButtonContainer>
         </Container>
-
-    )
-}
+    )}
 
 
 const Container = styled.div`
-  height: 100vh;
   width: 100vw;
   display: flex;
   flex-direction: column;
@@ -249,6 +248,8 @@ const Container = styled.div`
   gap: 1rem;
   align-items: center;
   background-color: #131324;
+  
+  
   .container {
     height: 85vh;
     width: 85vw;
@@ -258,49 +259,77 @@ const Container = styled.div`
     @media screen and (min-width: 720px) and (max-width: 1080px) {
       grid-template-columns: 35% 65%;
     }
-  }`;
+  }
+  
+  .navContainer {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      margin-top: 20px;
+      align-items: start;
+      gap: 30px;
+  }
+  
+  .searchBtn {
+    height: 30px;
+    width: 30%;
+    margin-right: 400px;
+    background-color: #9a86f3;
+    border: none;
+    border-radius: 5px;
+    color: white;
+  }
+  `;
 
 const SearchInput = styled.input`
-  width: 10%;
+  width: 60%;
+  height: 100%;
   padding: 0.5rem;
-  margin-bottom: 1rem;
   font-size: 1rem;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  background-color: #00000076;
 `;
 
 const SearchedUsersContainer = styled.div`
+  background-color: #00000076;
+  padding: 1rem;
+  border: none;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   p {
     font-weight: bold;
     color: white;
+    margin-bottom: 20px;
   }
 
   div {
     margin-bottom: 1rem;
     display: flex;
-    align-items: center;
+    justify-content: flex-end;
     color: white;
 
     button {
-      background-color: #4caf50;
+      background-color: #4e0eff;
       color: white;
       padding: 0.5rem;
       border: none;
       border-radius: 4px;
       cursor: pointer;
+      margin-left: 20px;
     }
   }
 `;
 
 const ButtonContainer = styled.div`
-  margin-top: auto;
-  align-self: flex-start;
-  margin-left: 100px;
-  margin-bottom: 20px;
+  width: 70%;
   button {
-    background-color: #4caf50;
-    color: white;
+    background-color: white;
+    color: black;
     padding: 0.7rem;
     border: none;
-    border-radius: 4px;
+    border-radius: 5px;
     cursor: pointer;
   }
 `;
