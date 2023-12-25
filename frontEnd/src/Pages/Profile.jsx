@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { useTable } from "react-table";
 import API from "../Actions/API";
 
 export default function Profile() {
@@ -18,6 +19,22 @@ export default function Profile() {
 
     const [avatarFile, setAvatarFile] = useState(null);
     const [avatarUrl, setAvatarUrl] = useState(null);
+
+    const columns = [
+        { Header: "Firstname", accessor: "firstname" },
+        { Header: "Lastname", accessor: "lastname" },
+        {
+            Header: "Actions",
+            accessor: "id",
+            Cell: ({ row }) => (
+                <button onClick={() => navigateToProfile(row.original)}>
+                    Go to Profile
+                </button>
+            ),
+        },
+    ];
+
+
 
 
     useEffect(() => {
