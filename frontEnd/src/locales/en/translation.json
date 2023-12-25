@@ -6,5 +6,14 @@
   "addToContacts": "Add to Contacts",
   "goProfile": "Go Profile",
   "write message": "Write message",
-  "Searched Users:": "Searched Users:"
+  "Searched Users": "Searched Users:",
+  "Welcome": "Welcome",
+  "Started_message": "Please select a chat to Start Messaging",
+  "type your message here": "type your message here",
+  "Search friends...": "Search friends...",
+  "Searched Friends": "Searched Friends",
+  "You are friends!": "You are friends!",
+  "Delete Friend": "Delete Friend",
+  "Your friend list:": "Your friend list:",
+  "Add Friend": "Add Friend"
 }

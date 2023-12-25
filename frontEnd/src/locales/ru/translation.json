@@ -6,5 +6,14 @@
   "addToContacts": "Добавить в контакты",
   "goProfile": "Перейти в профиль",
   "write message": "Написать сообщение",
-  "Searched Users:": "Поиск пользователей:"
+  "Searched Users": "Поиск пользователей:",
+  "Welcome": "Привет",
+  "Started_message": "Пожалуйста, выберите чат, чтобы начать обмен сообщениями",
+  "type your message here": "Пишите ваше сообщение здесь",
+  "Search friends...": "Поиск друзей...",
+  "Searched Friends": "Поиск друзей",
+  "You are friends!": "iSon amigos!",
+  "Delete Friend": "Eliminar amigo",
+  "Your friend list:": "Tu lista de amigos:",
+  "Add Friend": "Agregar amigo"
 }

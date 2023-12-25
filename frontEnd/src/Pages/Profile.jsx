@@ -4,6 +4,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { useTable } from "react-table";
 import API from "../Actions/API";
+import { useTranslation } from 'react-i18next';
+import i18n from 'i18next';
 
 export default function Profile() {
     const navigate = useNavigate();
@@ -16,6 +18,7 @@ export default function Profile() {
     const [searchedFriends, setSearchedFriends] = useState([]);
 
     const [isAlreadyFriend, setIsAlreadyFriend] = useState(false);
+    const { t } = useTranslation();
 
     const [avatarFile, setAvatarFile] = useState(null);
     const [avatarUrl, setAvatarUrl] = useState(null);
@@ -44,6 +47,7 @@ export default function Profile() {
             }
 
             const checkUrl = API.Friends.FriendsCheck;
+
 
             try {
                 const response = await axios.get(checkUrl, {
@@ -82,6 +86,8 @@ export default function Profile() {
                             firstname: response.data.firstname,
                             lastname: response.data.lastname,
                         });
+
+
                     } else {
                         console.error("Не удалось получить данные текущего пользователя");
                     }
@@ -134,15 +140,6 @@ export default function Profile() {
         fetchUserProfile();
     }, [navigate, authToken, location.state.contact.id]);
 
-    useEffect(() => {
-        console.log('currentUser:', currentUser);
-        console.log('profileUser:', profileUser);
-        console.log('avatarUrl:', avatarUrl);
-
-        if (currentUser && profileUser) {
-            getFile();
-        }
-    }, [currentUser, profileUser]);
 
     useEffect(() => {
         async function fetchFriendList() {
@@ -239,6 +236,12 @@ export default function Profile() {
     const handleSearch = async () => {
         const authToken = localStorage.getItem("authToken");
 
+        if (!searchTerm.trim()) {
+            setSearchedFriends([]);
+            return;
+        }
+
+
         try {
             const response = await axios.get(API.USER.SEARCH_USER, {
                 params: {
@@ -293,40 +296,38 @@ export default function Profile() {
         }
     };
 
-    const getFile = async () => {
-        if (!currentUser || !currentUser.id) {
-            console.error('Current user or user ID is undefined.');
-            return;
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await axios.get(API.Files.GET_FILE, {
+                    params: {
+                        userId: currentUser.id
+                    },
+                    headers: {
+                        Authorization: `Bearer ${authToken}`,
+                    },
+                    responseType: 'arraybuffer',
+                });
+                const arrayBufferView = new Uint8Array(response.data);
+                const blob = new Blob([arrayBufferView], { type: response.headers['content-type'] });
+                const base64String = await new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(reader.result);
+                    reader.readAsDataURL(blob);
+                });
+                const imageBlob = new Blob([arrayBufferView], { type: response.headers['content-type'] });
+                const imageObjectURL = URL.createObjectURL(imageBlob);
+                console.log('Avatar URL:', imageObjectURL);
+                setAvatarUrl(imageObjectURL);
+            } catch (error) {
+                console.error("Error fetching avatar:", error);
+            }
+        };
+
+        if (currentUser && currentUser.id) {
+            fetchData();
         }
-
-        try {
-            const response = await axios.get(API.Files.GET_FILE, {
-                params: {
-                    userId: currentUser.id
-                },
-                headers: {
-                    Authorization: `Bearer ${authToken}`,
-                },
-                responseType: 'arraybuffer',
-            });
-
-            const arrayBufferView = new Uint8Array(response.data);
-            const blob = new Blob([arrayBufferView], { type: response.headers['content-type'] });
-            const base64String = await new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.onload = () => resolve(reader.result);
-                reader.readAsDataURL(blob);
-            });
-            console.log('Avatar URL:', base64String);
-            const imageBlob = await base64String.blob();
-            const imageObjectURL = URL.createObjectURL(imageBlob);
-            setAvatarUrl(imageObjectURL);
-
-        } catch (error) {
-            console.error("Error fetching avatar:", error);
-        }
-    };
-
+    }, [navigate, authToken, location.state.contact.id, currentUser]);
 
 
 
@@ -349,7 +350,7 @@ export default function Profile() {
                         </h2>
                         {currentUser && profileUser.id === currentUser.id && (
                             <>
-                                <p>Your friend list:</p>
+                                <p>{t("Your friend list:")}</p>
                                 {friendList.map((friend) => (
                                     <div key={friend.id}>
                                         {friend.firstname} {friend.lastname}
@@ -361,13 +362,13 @@ export default function Profile() {
                             <>
                                 {isAlreadyFriend ? (
                                     <div>
-                                        <p>You are friends!</p>
+                                        <p>{t("You are friends!")}</p>
                                         <DeleteFriendButton onClick={removeFriend}>
-                                            Delete Friend
+                                            {t("Delete Friend")}
                                         </DeleteFriendButton>
                                     </div>
                                 ) : (
-                                    <AddFriendButton onClick={addFriend}>Add Friend</AddFriendButton>
+                                    <AddFriendButton onClick={addFriend}>{t("Add Friend")}</AddFriendButton>
                                 )}
                             </>
                         )}
@@ -384,7 +385,7 @@ export default function Profile() {
             )}
             {profileUser && profileUser.id !== currentUser.id && (
                 <WriteMessageButton onClick={writeMessage}>
-                    Write a Message
+                    {t("write message")}
                 </WriteMessageButton>
             )}
             {/*<div>*/}
@@ -403,21 +404,21 @@ export default function Profile() {
                     <SearchContainer>
                         <input
                             type="text"
-                            placeholder="Search friends..."
+                            placeholder={t("Search friends...")}
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
-                        <button onClick={handleSearch}>Search</button>
+                        <button onClick={handleSearch}>{t('search')}</button>
                     </SearchContainer>
 
                     {searchedFriends.length > 0 && (
                         <SearchedFriendsContainer>
-                            <p>Searched Friends</p>
+                            <p>{t("Searched Friends")}</p>
                             {searchedFriends.map((friend) => (
                                 <div key={friend.id}>
                                     {friend.firstname} {friend.lastname}
                                     <button onClick={() => navigateToProfile(friend)}>
-                                        Go to Profile
+                                        {t('goProfile')}
                                     </button>
                                 </div>
                             ))}

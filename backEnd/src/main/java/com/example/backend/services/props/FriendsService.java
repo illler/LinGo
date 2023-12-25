@@ -49,7 +49,7 @@ public class FriendsService {
     public List<User> retrieveAllUserFriends(String userId) {
         Optional<Friends> friendIds = friendsRepository.findByUserId(userId);
         return friendIds.map(friends -> friends.getFriends().stream()
-                .map(s -> userRepository.findById(s).orElseThrow())
+                .map(s -> userRepository.findById(s).orElse(null))
                 .toList()).orElse(null);
     }
 

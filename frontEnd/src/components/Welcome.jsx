@@ -1,14 +1,18 @@
 import React from "react";
 import styled from "styled-components";
 import Robot from "../assets/robot.gif";
+import {useTranslation} from "react-i18next";
+
 export default function Welcome({ currentUser }){
+    const { t } = useTranslation();
+
     return (
         <Container>
             <img src={Robot} alt={"Robot"} />
             <h1>
-                Welcome, <span>{currentUser.firstname}!</span>
+                {t('Welcome')}, <span>{currentUser.firstname}!</span>
             </h1>
-            <h3>Please select a chat to Start Messaging</h3>
+            <h3>{t('Started_message')}</h3>
         </Container>
     )
 }

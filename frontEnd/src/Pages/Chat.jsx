@@ -130,6 +130,11 @@ export default function Chat(){
     const handleSearch = async () => {
         const authToken = localStorage.getItem("authToken");
 
+        if (!searchTerm.trim()) {
+            setSearchedUsers([]);
+            return;
+        }
+
         try {
             const response = await axios.get(API.USER.SEARCH_USER, {
                 params: {
@@ -216,7 +221,7 @@ export default function Chat(){
                     {searchedUsers.map((user) => (
                         <div key={user.id}>
                             {user.firstname} {user.lastname}
-                            <button onClick={() => addToContacts(user)}>{t('Write message')}</button>
+                            <button onClick={() => addToContacts(user)}>{t('write message')}</button>
                         </div>
                     ))}
                 </SearchedUsersContainer>
