@@ -85,6 +85,7 @@ export default function Profile() {
                             id: response.data.id,
                             firstname: response.data.firstname,
                             lastname: response.data.lastname,
+                            lang: response.data.lang
                         });
 
 
@@ -329,11 +330,19 @@ export default function Profile() {
         }
     }, [navigate, authToken, location.state.contact.id, currentUser]);
 
+    useEffect(() => {
+        // Assuming currentUser has a language property, replace it with the actual property name
+        const userLanguage = currentUser && currentUser.lang;
 
+        if (userLanguage) {
+            // Set the language for the current user
+            i18n.changeLanguage(userLanguage);
+        }
+    }, [currentUser]);
 
     return (
         <ProfileContainer>
-            <BackButton onClick={() => navigate("/")}>Back to Chat</BackButton>
+            <BackButton onClick={() => navigate("/")}>{t("Back to Chat")}</BackButton>
             {profileUser ? (
                 <ProfileCard>
                     {/*<Avatar src="logo.svg" alt="User Avatar" />*/}
